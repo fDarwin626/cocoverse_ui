@@ -2,3 +2,5 @@
 library;
 
 // Public exports are added here as each effect is finished.
+export 'src/api/effect_controller.dart';
+export 'src/api/effect_quality.dart';
