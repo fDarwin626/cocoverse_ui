@@ -16,12 +16,15 @@ class ExampleApp extends StatelessWidget {
       theme: ThemeData.dark(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(title: const Text('Cocoverse UI example')),
-        body: const Center(
-          child: SizedBox(
-            width: 320,
-            height: 320,
-            child: GlossySphere(semanticLabel: 'Rotating starfield sphere'),
-          ),
+        body: const Column(
+          children: [
+            Expanded(
+              child: GlossySphere(semanticLabel: 'Glossy sphere'),
+            ),
+            Expanded(
+              child: StarfieldSphere(semanticLabel: 'Starfield sphere'),
+            ),
+          ],
         ),
       ),
     );
