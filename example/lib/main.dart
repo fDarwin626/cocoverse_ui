@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cocoverse_ui/cocoverse_ui.dart';
 
 void main() => runApp(const ExampleApp());
 
@@ -13,8 +14,15 @@ class ExampleApp extends StatelessWidget {
       title: 'Cocoverse UI example',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(useMaterial3: true),
-      home: const Scaffold(
-        body: Center(child: Text('Cocoverse UI example')),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Cocoverse UI example')),
+        body: const Center(
+          child: SizedBox(
+            width: 320,
+            height: 320,
+            child: GlossySphere(semanticLabel: 'Rotating starfield sphere'),
+          ),
+        ),
       ),
     );
   }

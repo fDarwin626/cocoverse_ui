@@ -1,5 +1,9 @@
 import 'package:flutter/foundation.dart';
 
+/// Controls an effect from code: pause, resume and reset.
+///
+/// Create one, pass it to an effect's `controller` parameter, and dispose it
+/// when you are done.
 class EffectController extends ChangeNotifier {
   bool _paused = false;
   int _resetCount = 0;
