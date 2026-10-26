@@ -21,6 +21,7 @@ Vertices? _build(
     scaleMax: 0.75,
     extrusion: 0.45,
     lift: 0.63,
+    split: 0.5,
     hoverX: 0,
     hoverY: 0,
     hoverZ: 1,

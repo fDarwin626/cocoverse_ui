@@ -9,3 +9,4 @@ export 'src/effects/starfield_sphere/starfield_sphere.dart';
 export 'src/effects/glass_ring/glass_ring.dart';
 export 'src/effects/particle_cube/particle_cube.dart';
 export 'src/effects/shard_sphere/shard_sphere.dart';
+export 'src/effects/jelly_sphere/jelly_sphere.dart';

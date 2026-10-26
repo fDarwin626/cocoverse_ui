@@ -33,7 +33,8 @@ class ShardSphere extends StatefulWidget {
     this.shardSize = 1.0,
     this.extrusion = 1.0,
     this.distance = 4.0,
-    this.lift = 1.0,
+    this.lift = 0.4,
+    this.split = 1.0,
     this.reach = 1.0,
     this.speed = 1.0,
     this.spin = 1.0,
@@ -66,6 +67,9 @@ class ShardSphere extends StatefulWidget {
 
   /// How much shards grow near a finger or mouse. 0 turns it off.
   final double lift;
+
+  /// How far shards slide away from a finger or mouse. 0 turns it off.
+  final double split;
 
   /// How far the finger's influence reaches, where 1.0 is the default.
   final double reach;
@@ -189,9 +193,9 @@ class _ShardSphereState extends State<ShardSphere> {
       }
     }
     final strengthTarget = hit ? frame.pointerStrength : 0.0;
+    final rate = strengthTarget > _hoverStrength ? 10.0 : 4.0;
     _hoverStrength +=
-        (strengthTarget - _hoverStrength) * (1 - math.exp(-elapsed * 10));
-
+        (strengthTarget - _hoverStrength) * (1 - math.exp(-elapsed * rate));
     final reachOut = _clamp(widget.reach, 0.05, 2.0);
     final size01 = _clamp(widget.shardSize, 0.1, 2.0);
 
@@ -207,6 +211,7 @@ class _ShardSphereState extends State<ShardSphere> {
       scaleMax: 0.75 * size01,
       extrusion: extrusion,
       lift: 0.63 * _clamp(widget.lift, 0, 3),
+      split: 0.5 * _clamp(widget.split, 0, 3),
       hoverX: _hoverX,
       hoverY: _hoverY,
       hoverZ: _hoverZ,

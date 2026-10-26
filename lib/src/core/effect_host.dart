@@ -26,6 +26,7 @@ class EffectHost extends StatefulWidget {
     this.rotatesOnDrag = true,
     this.dragSensitivity = 1.0,
     this.autoRotate = 0.0,
+    this.restRate = 0.0,
     this.quality = EffectQuality.high,
     this.controller,
     this.background,
@@ -54,7 +55,10 @@ class EffectHost extends StatefulWidget {
   final double autoRotate;
 
   /// Requested level of detail.
+  
   final EffectQuality quality;
+  /// How quickly a drag rotation eases back to rest, per second. 0 keeps it.
+  final double restRate;
 
   /// Optional programmatic control.
   final EffectController? controller;
@@ -91,6 +95,7 @@ class _EffectHostState extends State<EffectHost>
   double _pitchVelocity = 0;
   bool _dragging = false;
   bool _mouseInside = false;
+  bool _pressed = false;
   Offset? _pointer;
   double _pointerTarget = 0;
   double _pointerStrength = 0;
@@ -174,6 +179,7 @@ class _EffectHostState extends State<EffectHost>
     _pitchVelocity = 0;
     _dragging = false;
     _pointer = null;
+    _pressed = false;
     _pointerTarget = 0;
     _pointerStrength = 0;
   }
@@ -198,6 +204,11 @@ class _EffectHostState extends State<EffectHost>
       final decay = math.exp(-_inertiaDecay * dt);
       _yawVelocity *= decay;
       _pitchVelocity *= decay;
+            if (widget.restRate > 0) {
+        final pull = math.exp(-widget.restRate * dt);
+        _yaw *= pull;
+        _pitch *= pull;
+      }
       if (_yaw > _twoPi || _yaw < -_twoPi) {
         _yaw = _yaw % _twoPi;
       }
@@ -214,6 +225,7 @@ class _EffectHostState extends State<EffectHost>
     if (!widget.interactive) return;
     _pointer = event.localPosition;
     _pointerTarget = 1;
+    _pressed = true;
     if (widget.rotatesOnDrag) {
       _dragging = true;
       _yawVelocity = 0;
@@ -247,6 +259,7 @@ class _EffectHostState extends State<EffectHost>
   void _onPointerEnd(PointerEvent _) {
     if (!widget.interactive) return;
     _dragging = false;
+    _pressed = false;
     // A mouse keeps hovering after a click. Touch has no hover, so it eases out.
     _pointerTarget = _mouseInside ? 1 : 0;
     _repaint.ping();
@@ -281,6 +294,7 @@ class _EffectHostState extends State<EffectHost>
         pitch: _pitch,
         pointer: _pointer,
         pointerStrength: _pointerStrength,
+        pressed: _pressed,
         quality: widget.quality,
       );
 

@@ -12,6 +12,7 @@ class EffectFrame {
     required this.pitch,
     required this.pointer,
     required this.pointerStrength,
+    required this.pressed,
     required this.quality,
   });
 
@@ -32,6 +33,9 @@ class EffectFrame {
 
   /// How strongly the pointer is acting on the effect, eased from 0 to 1.
   final double pointerStrength;
+
+  /// Whether a pointer is held down on the effect right now.
+  final bool pressed;
 
   /// The requested level of detail.
   final EffectQuality quality;

@@ -57,7 +57,8 @@ class _GalleryState extends State<Gallery> {
         ParticleCube(colors: colors, semanticLabel: 'Particle cube'),
       _Demo.cluster =>
         ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
-      _Demo.jelly => const _ComingSoon('Jelly sphere'),
+      _Demo.jelly =>
+        JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
       _Demo.glossy =>
         GlossySphere(colors: colors, semanticLabel: 'Glossy sphere'),
       _Demo.starfield =>
@@ -140,13 +141,3 @@ class _GalleryState extends State<Gallery> {
 }
 
 
-class _ComingSoon extends StatelessWidget {
-  const _ComingSoon(this.name);
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('$name is coming next'));
-  }
-}

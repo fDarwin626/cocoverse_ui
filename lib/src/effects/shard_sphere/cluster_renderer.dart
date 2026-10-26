@@ -31,6 +31,9 @@ class ClusterRenderer {
       : _depth = Float64List(geometry.count),
         _scale = Float64List(geometry.count),
         _hover = Float64List(geometry.count),
+       _pushX = Float64List(geometry.count),
+        _pushY = Float64List(geometry.count),
+        _pushZ = Float64List(geometry.count),
         _order = List<int>.generate(geometry.count, (i) => i),
         _positions = Float32List(geometry.count * trianglesPerShard * 6),
         _colors = Int32List(geometry.count * trianglesPerShard * 3);
@@ -41,6 +44,9 @@ class ClusterRenderer {
   final Float64List _depth;
   final Float64List _scale;
   final Float64List _hover;
+  final Float64List _pushX;
+  final Float64List _pushY;
+  final Float64List _pushZ;
   final List<int> _order;
   final Float32List _positions;
   final Int32List _colors;
@@ -69,6 +75,7 @@ class ClusterRenderer {
     required double scaleMax,
     required double extrusion,
     required double lift,
+    required double split,
     required double hoverX,
     required double hoverY,
     required double hoverZ,
@@ -104,6 +111,38 @@ class ClusterRenderer {
           1 - _smoothstep(reachIn, reachOut, math.sqrt(hx * hx + hy * hy + hz * hz));
       final hov = near * hoverStrength;
       _hover[i] = hov;
+
+      
+      // Split: shards near the pointer slide away from it. When the pointer
+      // leaves, hov fades to zero and they slide back.
+      var pushX = 0.0;
+      var pushY = 0.0;
+      var pushZ = 0.0;
+      if (hov > 0.001) {
+        var awayX = hx;
+        var awayY = hy;
+        var awayZ = hz;
+        var awayLength =
+            math.sqrt(awayX * awayX + awayY * awayY + awayZ * awayZ);
+        if (awayLength < 0.02) {
+          // Right under the pointer: push straight out of the sphere.
+          awayX = x1;
+          awayY = wy;
+          awayZ = wz;
+          awayLength =
+              math.sqrt(awayX * awayX + awayY * awayY + awayZ * awayZ);
+        }
+        if (awayLength > 1e-6) {
+          final amount = hov * split / awayLength;
+          pushX = awayX * amount;
+          pushY = awayY * amount;
+          pushZ = awayZ * amount;
+        }
+      }
+      _pushX[i] = pushX;
+      _pushY[i] = pushY;
+      _pushZ[i] = pushZ;
+      _depth[i] = wz + pushZ;
 
       final n = math.min(
         1.0,
@@ -152,13 +191,18 @@ class ClusterRenderer {
         final z1 = -px * sinYaw + pz * cosYaw;
         final y2 = py * cosPitch - z1 * sinPitch;
         final z2 = py * sinPitch + z1 * cosPitch;
-        _wx[k] = x1;
-        _wy[k] = y2;
-        _wz[k] = z2;
+        final wx = x1 + _pushX[shard];
+        final wy = y2 + _pushY[shard];
+        final wz = z2 + _pushZ[shard];
+        _wx[k] = wx;
+        _wy[k] = wy;
+        _wz[k] = wz;
 
-        final denominator = math.max(0.05, distance - z2);
-        _sx[k] = centerX + focal * x1 / denominator;
-        _sy[k] = centerY - focal * y2 / denominator;
+        final denominator = math.max(0.05, distance - wz);
+        _sx[k] = centerX + focal * wx / denominator;
+        _sy[k] = centerY - focal * wy / denominator;
+
+
       }
 
       for (var t = 0; t < trianglesPerShard; t++) {
