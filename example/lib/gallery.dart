@@ -19,7 +19,7 @@ class Gallery extends StatefulWidget {
 class _GalleryState extends State<Gallery> {
   static const List<List<Color>> _palettes = <List<Color>>[
     <Color>[Color(0xFF7B5CFF), Color(0xFF46D9E8), Color(0xFFFF6FAE)],
-    <Color>[Color(0xFFFF8A1F), Color(0xFFFF3D6E), Color(0xFFFFD45E)],
+    <Color> [Color.fromARGB(255, 250, 155, 196), Color.fromARGB(255, 240, 204, 232), Color.fromARGB(255, 179, 168, 226)],
     <Color>[Color(0xFF1E8E6A), Color(0xFF34D1BF), Color(0xFF63B7F0)],
   ];
 
@@ -55,7 +55,8 @@ class _GalleryState extends State<Gallery> {
     return switch (_demo) {
          _Demo.cube =>
         ParticleCube(colors: colors, semanticLabel: 'Particle cube'),
-      _Demo.cluster => const _ComingSoon('Cluster'),
+      _Demo.cluster =>
+        ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
       _Demo.jelly => const _ComingSoon('Jelly sphere'),
       _Demo.glossy =>
         GlossySphere(colors: colors, semanticLabel: 'Glossy sphere'),
