@@ -33,3 +33,4 @@ flutter:
   shaders:
     - shaders/glossy_sphere.frag
     - shaders/starfield_sphere.frag
+    - shaders/glass_ring.frag

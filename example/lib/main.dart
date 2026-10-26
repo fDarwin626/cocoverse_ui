@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cocoverse_ui/cocoverse_ui.dart';
+
+import 'gallery.dart';
 
 void main() => runApp(const ExampleApp());
 
@@ -14,19 +15,7 @@ class ExampleApp extends StatelessWidget {
       title: 'Cocoverse UI example',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(useMaterial3: true),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Cocoverse UI example')),
-        body: const Column(
-          children: [
-            Expanded(
-              child: GlossySphere(semanticLabel: 'Glossy sphere'),
-            ),
-            Expanded(
-              child: StarfieldSphere(semanticLabel: 'Starfield sphere'),
-            ),
-          ],
-        ),
-      ),
+      home: const Gallery(),
     );
   }
 }
