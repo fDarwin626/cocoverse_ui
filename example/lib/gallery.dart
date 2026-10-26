@@ -1,7 +1,11 @@
 import 'package:cocoverse_ui/cocoverse_ui.dart';
 import 'package:flutter/material.dart';
 
-enum _Demo { glossy, starfield, glass }
+
+enum _Demo { glossy, starfield, glass, cube, cluster, jelly }
+
+
+
 
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
@@ -22,8 +26,37 @@ class _GalleryState extends State<Gallery> {
   _Demo _demo = _Demo.glass;
   int _palette = 0;
 
+
+    static const List<List<_Demo>> _pages = <List<_Demo>>[
+    <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
+    <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
+  ];
+
+  static const Map<_Demo, String> _labels = <_Demo, String>{
+    _Demo.glossy: 'Glossy',
+    _Demo.starfield: 'Starfield',
+    _Demo.glass: 'Glass ring',
+    _Demo.cube: 'Cube',
+    _Demo.cluster: 'Cluster',
+    _Demo.jelly: 'Jelly',
+  };
+
+  int _page = 0;
+
+  void _goToPage(int page) {
+    setState(() {
+      _page = page;
+      _demo = _pages[page].first;
+    });
+  }
+
+
   Widget _demoFor(List<Color> colors) {
     return switch (_demo) {
+         _Demo.cube =>
+        ParticleCube(colors: colors, semanticLabel: 'Particle cube'),
+      _Demo.cluster => const _ComingSoon('Cluster'),
+      _Demo.jelly => const _ComingSoon('Jelly sphere'),
       _Demo.glossy =>
         GlossySphere(colors: colors, semanticLabel: 'Glossy sphere'),
       _Demo.starfield =>
@@ -46,15 +79,30 @@ class _GalleryState extends State<Gallery> {
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
             child: SegmentedButton<_Demo>(
-              segments: const [
-                ButtonSegment(value: _Demo.glossy, label: Text('Glossy')),
-                ButtonSegment(value: _Demo.starfield, label: Text('Starfield')),
-                ButtonSegment(value: _Demo.glass, label: Text('Glass ring')),
+              segments: [
+                for (final demo in _pages[_page])
+                  ButtonSegment(value: demo, label: Text(_labels[demo]!)),
               ],
               selected: {_demo},
               onSelectionChanged: (selection) =>
                   setState(() => _demo = selection.first),
             ),
+          ),
+                    Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: _page > 0 ? () => _goToPage(_page - 1) : null,
+                icon: const Icon(Icons.chevron_left),
+              ),
+              Text('${_page + 1} / ${_pages.length}'),
+              IconButton(
+                onPressed: _page < _pages.length - 1
+                    ? () => _goToPage(_page + 1)
+                    : null,
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
           ),
           Expanded(child: _demoFor(colors)),
           Padding(
@@ -87,5 +135,17 @@ class _GalleryState extends State<Gallery> {
         ],
       ),
     );
+  }
+}
+
+
+class _ComingSoon extends StatelessWidget {
+  const _ComingSoon(this.name);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('$name is coming next'));
   }
 }
