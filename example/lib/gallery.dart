@@ -2,8 +2,7 @@ import 'package:cocoverse_ui/cocoverse_ui.dart';
 import 'package:flutter/material.dart';
 
 
-enum _Demo { glossy, starfield, glass, cube, cluster, jelly }
-
+enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, soonA, soonB }
 
 
 
@@ -30,6 +29,7 @@ class _GalleryState extends State<Gallery> {
     static const List<List<_Demo>> _pages = <List<_Demo>>[
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
     <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
+    <_Demo>[_Demo.water, _Demo.soonA, _Demo.soonB],
   ];
 
   static const Map<_Demo, String> _labels = <_Demo, String>{
@@ -39,6 +39,9 @@ class _GalleryState extends State<Gallery> {
     _Demo.cube: 'Cube',
     _Demo.cluster: 'Cluster',
     _Demo.jelly: 'Jelly',
+    _Demo.water: 'Water',
+    _Demo.soonA: 'Next',
+    _Demo.soonB: 'Next',
   };
 
   int _page = 0;
@@ -59,6 +62,12 @@ class _GalleryState extends State<Gallery> {
         ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
       _Demo.jelly =>
         JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
+         _Demo.water => WaterBall(
+          waterColor: Color.lerp(colors[1], const Color(0xFFFFFFFF), 0.6)!,
+          semanticLabel: 'Water ball',
+        ),
+      _Demo.soonA => const _ComingSoon('Next effect'),
+      _Demo.soonB => const _ComingSoon('Next effect'),
       _Demo.glossy =>
         GlossySphere(colors: colors, semanticLabel: 'Glossy sphere'),
       _Demo.starfield =>
@@ -141,3 +150,14 @@ class _GalleryState extends State<Gallery> {
 }
 
 
+
+class _ComingSoon extends StatelessWidget {
+  const _ComingSoon(this.name);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('$name is coming next'));
+  }
+}
