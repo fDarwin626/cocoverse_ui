@@ -40,12 +40,14 @@ class WaterBall extends StatefulWidget {
   /// Creates a water ball.
   const WaterBall({
     super.key,
-    this.waterColor = const Color(0xFFACE8FF),
-    this.tint = 0.5,
-    this.reflection = 0.2,
+    this.waterColor = const ui.Color.fromARGB(255, 30, 138, 240),
+    this.tint = 0.55,
+    this.reflection = 0.12,
     this.level = 0.12,
     this.fillSeconds = 5.0,
     this.push = 1.0,
+    this.dent = 1.0,
+    this.opacity = 1.0,
     this.size = 1.0,
     this.background,
     this.speed = 1.0,
@@ -76,6 +78,13 @@ class WaterBall extends StatefulWidget {
 
   /// How strongly a finger drags the water along. 0 turns it off.
   final double push;
+
+  /// How far the water parts when you press it, like stepping into shallow
+  /// water. 0 turns it off.
+  final double dent;
+
+  /// How see-through the water is. 1.0 is the default; lower is clearer.
+  final double opacity;
 
   /// Size of the ball, where 1.0 is the default.
   final double size;
@@ -128,6 +137,7 @@ class _WaterBallState extends State<WaterBall> {
   Uint16List _backIndex = Uint16List(0);
 
   double _lastTime = 0;
+  double _boilTime = 0;
   bool _hasHit = false;
   double _prevHitX = 0;
   double _prevHitY = 0;
@@ -182,9 +192,10 @@ class _WaterBallState extends State<WaterBall> {
       b = 0.96 + (0.22 - 0.96) * t;
     }
     final sun =
-        math.pow(math.max(0.0, dx * _lightX + dy * _lightY + dz * _lightZ), 40)
-                .toDouble() *
-            0.9;
+        math
+            .pow(math.max(0.0, dx * _lightX + dy * _lightY + dz * _lightZ), 40)
+            .toDouble() *
+        0.9;
     _envR = r + sun;
     _envG = g + sun;
     _envB = b + sun;
@@ -202,32 +213,44 @@ class _WaterBallState extends State<WaterBall> {
     double alphaScale,
   ) {
     final facing = math.max(0.0, nx * vx + ny * vy + nz * vz);
-    final fresnel = _fresnelBase +
-        (1 - _fresnelBase) * math.pow(1 - facing, 5).toDouble();
+    final fresnel =
+        _fresnelBase + (1 - _fresnelBase) * math.pow(1 - facing, 5).toDouble();
 
     // Mirror direction of the view vector around the normal.
     final rx = 2 * facing * nx - vx;
     final ry = 2 * facing * ny - vy;
     final rz = 2 * facing * nz - vz;
     _environment(rx, ry, rz);
-    final spec = math
+    final spec =
+        math
             .pow(math.max(0.0, rx * _lightX + ry * _lightY + rz * _lightZ), 90)
             .toDouble() *
         0.8;
 
     // Light that passes through the water loses everything but its colour.
-    final seen = <double>[0.70, 0.70, 0.75];
+    final seen = <double>[0.85, 0.90, 0.95];
     final water = <double>[_waterR, _waterG, _waterB];
-    final env = <double>[_envR, _envG, _envB];
+    final env = <double>[
+      _envR * 0.75 + _waterR * 0.25,
+      _envG * 0.75 + _waterG * 0.25,
+      _envB * 0.75 + _waterB * 0.25,
+    ];
     final out = <double>[0, 0, 0];
     for (var c = 0; c < 3; c++) {
       final through =
           seen[c] * math.exp(-_absorption * thickness * (1 - water[c]));
-      out[c] = through + (env[c] - through) * fresnel + spec;
+      final rim = math.pow(1 - facing, 3).toDouble() * 0.22;
+      out[c] = through +
+          (env[c] - through) * fresnel +
+          spec +
+          rim * (0.4 + 0.6 * water[c]);
     }
 
-    final alpha =
-        wet * _clamp(0.45 + 0.5 * fresnel + 2.5 * thickness, 0, 0.95) * alphaScale;
+    final alpha = wet *
+        _clamp(0.30 + 0.55 * fresnel + 2.0 * thickness, 0, 0.9) *
+        alphaScale *
+        widget.opacity;
+
     return _pack(alpha, out[0], out[1], out[2]);
   }
 
@@ -244,6 +267,7 @@ class _WaterBallState extends State<WaterBall> {
     double sinPitch,
     double elapsed,
   ) {
+    sim.clearPress();
     final pointer = frame.pointer;
     if (pointer == null || frame.pointerStrength < 0.05 || widget.push <= 0) {
       _hasHit = false;
@@ -280,6 +304,17 @@ class _WaterBallState extends State<WaterBall> {
     final hitX = worldX * cosYaw - z1 * sinYaw;
     final hitZ = worldX * sinYaw + z1 * cosYaw;
     final hitY = y1;
+
+        // Stepping into the water: it parts around the pressed point.
+    if (frame.pressed && widget.dent > 0) {
+      sim.setPress(
+        px: hitX,
+        py: hitY,
+        pz: hitZ,
+        radius: 0.32,
+        strength: widget.dent,
+      );
+    }
 
     if (_hasHit) {
       var vx = (hitX - _prevHitX) / elapsed;
@@ -327,6 +362,7 @@ class _WaterBallState extends State<WaterBall> {
       elapsed = 0;
     }
     _lastTime = frame.time;
+    _boilTime = frame.time;
     elapsed = math.min(elapsed, 0.033);
 
     final centerX = size.width / 2;
@@ -342,8 +378,18 @@ class _WaterBallState extends State<WaterBall> {
     final sinPitch = math.sin(pitch);
 
     if (elapsed > 0) {
-      _pushWater(sim, frame, size, focal, distance, cosYaw, sinYaw, cosPitch,
-          sinPitch, elapsed);
+      _pushWater(
+        sim,
+        frame,
+        size,
+        focal,
+        distance,
+        cosYaw,
+        sinYaw,
+        cosPitch,
+        sinPitch,
+        elapsed,
+      );
       sim.advance(elapsed);
     }
     sim.computeGradient();
@@ -352,10 +398,11 @@ class _WaterBallState extends State<WaterBall> {
     _waterR = color.r;
     _waterG = color.g;
     _waterB = color.b;
-    _absorption = 12 * _clamp(widget.tint, 0, 1);
+    _absorption = 20 * _clamp(widget.tint, 0, 1);
     _fresnelBase = _clamp(widget.reflection, 0, 1);
 
     final gradient = sim.surfaceGradient;
+    final vel = sim.velocity;
     final heights = sim.height;
     const bump = 7.0;
 
@@ -370,6 +417,20 @@ class _WaterBallState extends State<WaterBall> {
       var nx = px - bump * gradient[k];
       var ny = py - bump * gradient[k + 1];
       var nz = pz - bump * gradient[k + 2];
+      
+      // Thin, fast water boils: small wobbles in the surface normal. It calms
+      // down by itself as the water settles.
+      final speed = math.sqrt(
+        vel[k] * vel[k] + vel[k + 1] * vel[k + 1] + vel[k + 2] * vel[k + 2],
+      );
+      final boil =
+          _clamp(speed * 0.7, 0, 1) * (1 - _smoothstep(0.04, 0.12, h));
+      if (boil > 0.01) {
+        final t = _boilTime;
+        nx += boil * 0.45 * math.sin(px * 13 + t * 3.1) * math.sin(py * 11 - t * 2.3);
+        ny += boil * 0.45 * math.sin(py * 12 + t * 2.7) * math.sin(pz * 10 - t * 3.5);
+        nz += boil * 0.45 * math.sin(pz * 14 - t * 2.9) * math.sin(px * 9 + t * 2.1);
+      }
       final nLength = math.sqrt(nx * nx + ny * ny + nz * nz);
       nx /= nLength;
       ny /= nLength;
@@ -411,8 +472,9 @@ class _WaterBallState extends State<WaterBall> {
       vy /= vLength;
       vz /= vLength;
 
-      _frontColor[i] = _shade(rnx0, rny, rnz, vx, vy, vz, 2 * h, wet, 1.0);
-      _backColor[i] = _shade(-rnx0, -rny, -rnz, vx, vy, vz, 2 * h, wet, 0.55);
+      _frontColor[i] = _shade(rnx0, rny, rnz, vx, vy, vz, 3 * h, wet, 1.0);
+      _backColor[i] = _shade(-rnx0, -rny, -rnz, vx, vy, vz, 3 * h, wet, 0.55);
+
     }
 
     // Sort the triangles into the near half and the far half of the ball.

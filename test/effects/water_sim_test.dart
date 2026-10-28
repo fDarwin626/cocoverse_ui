@@ -87,5 +87,49 @@ void main() {
     for (var i = 0; i < a.height.length; i++) {
       expect(a.height[i], b.height[i]);
     }
+
+    
+  test('pressing opens a hole and keeps the volume', () {
+    final sim = _newSim();
+    _run(sim, 12);
+    final before = sim.totalVolume;
+
+    sim.setPress(px: 0, py: 0, pz: 1, radius: 0.35, strength: 1);
+    for (var i = 0; i < 60; i++) {
+      sim.advance(0.016);
+    }
+
+    // The vertex closest to the pressed point.
+    var centre = 0;
+    var best = -2.0;
+    for (var i = 0; i < sim.mesh.vertexCount; i++) {
+      final z = sim.mesh.position[i * 3 + 2];
+      if (z > best) {
+        best = z;
+        centre = i;
+      }
+    }
+    expect(sim.height[centre], lessThan(0.5 * sim.targetThickness));
+    expect(sim.totalVolume, closeTo(before, 1e-6));
+  });
+
+  test('the hole closes again after the press ends', () {
+    final sim = _newSim();
+    _run(sim, 12);
+    sim.setPress(px: 0, py: 0, pz: 1, radius: 0.35, strength: 1);
+    _run(sim, 1);
+    sim.clearPress();
+    _run(sim, 10);
+    expect(_spread(sim), lessThan(0.02));
+  });
+
+  test('the second jet starts after the first', () {
+    final sim = _newSim();
+    expect(sim.time, 0);
+    _run(sim, 0.5);
+    expect(sim.isFilling, isTrue);
+    expect(sim.totalVolume, greaterThan(0));
+    expect(sim.totalVolume, lessThan(0.3 * sim.targetVolume));
+  });
   });
 }
