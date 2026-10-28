@@ -36,3 +36,4 @@ flutter:
     - shaders/glass_ring.frag
     - shaders/jelly_sphere.frag
     - shaders/urchin.frag
+    - shaders/foil_ring.frag

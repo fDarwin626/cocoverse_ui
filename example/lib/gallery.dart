@@ -1,8 +1,7 @@
 import 'package:cocoverse_ui/cocoverse_ui.dart';
 import 'package:flutter/material.dart';
 
- enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, soonB }
-
+enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, foil }
 
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
@@ -27,7 +26,7 @@ class _GalleryState extends State<Gallery> {
     static const List<List<_Demo>> _pages = <List<_Demo>>[
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
     <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
-    <_Demo>[_Demo.water, _Demo.urchin, _Demo.soonB],
+    <_Demo>[_Demo.water, _Demo.urchin, _Demo.foil],
   ];
 
   static const Map<_Demo, String> _labels = <_Demo, String>{
@@ -39,7 +38,7 @@ class _GalleryState extends State<Gallery> {
     _Demo.jelly: 'Jelly',
     _Demo.water: 'Water',
     _Demo.urchin: 'Urchin',
-    _Demo.soonB: 'Next',
+   _Demo.foil: 'Foil ring',
   };
 
   int _page = 0;
@@ -65,7 +64,7 @@ class _GalleryState extends State<Gallery> {
           semanticLabel: 'Water ball',
         ),
          _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
-      _Demo.soonB => const _ComingSoon('Next effect'),
+      _Demo.foil => FoilRing(colors: colors, semanticLabel: 'Foil ring'),
       _Demo.glossy =>
         GlossySphere(colors: colors, semanticLabel: 'Glossy sphere'),
       _Demo.starfield =>

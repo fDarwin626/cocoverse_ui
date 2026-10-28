@@ -12,3 +12,4 @@ export 'src/effects/shard_sphere/shard_sphere.dart';
 export 'src/effects/jelly_sphere/jelly_sphere.dart';
 export 'src/effects/water_ball/water_ball.dart';
 export 'src/effects/urchin/urchin.dart';
+export 'src/effects/foil_ring/foil_ring.dart';

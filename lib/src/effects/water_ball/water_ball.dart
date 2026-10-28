@@ -448,7 +448,13 @@ class _WaterBallState extends State<WaterBall> {
       _rotatedZ[i] = rz;
 
       // Thick water bulges outward a little.
-      final bulge = 1 + 0.35 * h;
+      // Fast water is thrown slightly outward. Kept small and smooth: big
+      // per-vertex differences stretch the triangles and tear the surface.
+      final lift = _smoothstep(1.5, 5.0, speed) *
+          _smoothstep(0.01, 0.05, h) *
+          0.16 *
+          (0.8 + 0.2 * math.sin(px * 5 + py * 4 + pz * 6 + _boilTime * 3));
+      final bulge = 1 + 0.35 * h + lift;
       final wx = tx * bulge;
       final wy = ry * bulge;
       final wz = rz * bulge;
