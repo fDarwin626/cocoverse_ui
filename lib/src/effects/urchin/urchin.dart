@@ -231,9 +231,9 @@ class _UrchinState extends State<Urchin> {
 
   ({double steps, double relax}) _tierFor(EffectQuality quality) =>
       switch (quality) {
-        EffectQuality.low => (steps: 22.0, relax: 1.0),
-        EffectQuality.medium => (steps: 32.0, relax: 0.85),
-        EffectQuality.high => (steps: 44.0, relax: 0.7),
+        EffectQuality.low => (steps: 44.0, relax: 0.7),
+        EffectQuality.medium => (steps: 64.0, relax: 0.5),
+        EffectQuality.high => (steps: 96.0, relax: 0.35),
       };
 
   void _paintFrame(

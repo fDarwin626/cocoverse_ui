@@ -31,7 +31,7 @@ const float BASE = 0.16;
 // Camera distance of the original (1 / its perspective of 0.15).
 const float CAMERA_DISTANCE = 6.666667;
 // Hard ceiling for the march loop. uSteps decides how many are really used.
-const int MAX_STEPS = 56;
+const int MAX_STEPS = 100;
 // Halvings used to pin down the surface once the march steps inside it.
 const int BISECT_STEPS = 4;
 // Caps the slope estimate so the pinched poles cannot stall the march.
