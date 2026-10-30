@@ -1,8 +1,7 @@
 import 'package:cocoverse_ui/cocoverse_ui.dart';
 import 'package:flutter/material.dart';
 
-enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, foil }
-
+enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, foil, cubeSphere, blossom }
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
   /// Creates the gallery.
@@ -27,6 +26,7 @@ class _GalleryState extends State<Gallery> {
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
     <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
     <_Demo>[_Demo.water, _Demo.urchin, _Demo.foil],
+    <_Demo>[_Demo.cubeSphere, _Demo.blossom],
   ];
 
   static const Map<_Demo, String> _labels = <_Demo, String>{
@@ -38,7 +38,9 @@ class _GalleryState extends State<Gallery> {
     _Demo.jelly: 'Jelly',
     _Demo.water: 'Water',
     _Demo.urchin: 'Urchin',
-   _Demo.foil: 'Foil ring',
+    _Demo.foil: 'Foil ring',
+    _Demo.blossom: 'Blossom',
+   _Demo.cubeSphere: 'Cube sphere',
   };
 
   int _page = 0;
@@ -63,8 +65,11 @@ class _GalleryState extends State<Gallery> {
           waterColor: Color.lerp(colors[1], const Color(0xFFFFFFFF), 0.6)!,
           semanticLabel: 'Water ball',
         ),
-         _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
+        _Demo.urchin => Urchin(colors: colors, quality: EffectQuality.high, semanticLabel: 'Urchin'),
+        // _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
       _Demo.foil => FoilRing(colors: colors, semanticLabel: 'Foil ring'),
+_Demo.blossom => Blossom(spin: 0, float: 0, tilt: 0, semanticLabel: 'Blossom'),
+        _Demo.cubeSphere => CubeSphere(semanticLabel: 'Cube sphere'),
       _Demo.glossy =>
         GlossySphere(colors: colors, semanticLabel: 'Glossy sphere'),
       _Demo.starfield =>
@@ -148,13 +153,3 @@ class _GalleryState extends State<Gallery> {
 
 
 
-class _ComingSoon extends StatelessWidget {
-  const _ComingSoon(this.name);
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('$name is coming next'));
-  }
-}
