@@ -15,3 +15,4 @@ export 'src/effects/urchin/urchin.dart';
 export 'src/effects/foil_ring/foil_ring.dart';
 export 'src/effects/cube_sphere/cube_sphere.dart';
 export 'src/effects/blossom/blossom.dart';
+export 'src/effects/geo_morph/geo_morph.dart';

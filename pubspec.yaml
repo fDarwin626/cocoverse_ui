@@ -37,3 +37,4 @@ flutter:
     - shaders/jelly_sphere.frag
     - shaders/urchin.frag
     - shaders/foil_ring.frag
+    - shaders/geo_morph.frag

@@ -1,7 +1,9 @@
 import 'package:cocoverse_ui/cocoverse_ui.dart';
 import 'package:flutter/material.dart';
 
-enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, foil, cubeSphere, blossom }
+
+
+enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, foil, geo, blossom, cubeSphere }
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
   /// Creates the gallery.
@@ -26,7 +28,7 @@ class _GalleryState extends State<Gallery> {
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
     <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
     <_Demo>[_Demo.water, _Demo.urchin, _Demo.foil],
-    <_Demo>[_Demo.cubeSphere, _Demo.blossom],
+    <_Demo>[_Demo.cubeSphere, _Demo.blossom, _Demo.geo],
   ];
 
   static const Map<_Demo, String> _labels = <_Demo, String>{
@@ -39,6 +41,7 @@ class _GalleryState extends State<Gallery> {
     _Demo.water: 'Water',
     _Demo.urchin: 'Urchin',
     _Demo.foil: 'Foil ring',
+    _Demo.geo:'GeoMorph',
     _Demo.blossom: 'Blossom',
    _Demo.cubeSphere: 'Cube sphere',
   };
@@ -67,8 +70,17 @@ class _GalleryState extends State<Gallery> {
         ),
         _Demo.urchin => Urchin(colors: colors, quality: EffectQuality.high, semanticLabel: 'Urchin'),
         // _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
-      _Demo.foil => FoilRing(colors: colors, semanticLabel: 'Foil ring'),
-_Demo.blossom => Blossom(spin: 0, float: 0, tilt: 0, semanticLabel: 'Blossom'),
+            _Demo.foil => FoilRing(colors: colors, semanticLabel: 'Foil ring'),
+      _Demo.geo => GeoMorph(
+          color: colors[0],
+          shapeColors: {
+            GeoShape.sphere: colors[1],
+            GeoShape.octahedron: colors[2],
+            GeoShape.torus: colors[1],
+          },
+          semanticLabel: 'GeoMorph',
+        ),
+      _Demo.blossom => Blossom(spin: 0, float: 0, tilt: 0, semanticLabel: 'Blossom'),
         _Demo.cubeSphere => CubeSphere(semanticLabel: 'Cube sphere'),
       _Demo.glossy =>
         GlossySphere(colors: colors, semanticLabel: 'Glossy sphere'),
