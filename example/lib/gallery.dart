@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 
 
-enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, foil, geo, blossom, cubeSphere }
+enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, foil, geo, blossom, cubeSphere, capsule }
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
   /// Creates the gallery.
@@ -21,7 +21,8 @@ class _GalleryState extends State<Gallery> {
   ];
 
   _Demo _demo = _Demo.glass;
-  int _palette = 0;
+int _palette = 0;
+final CharacterController _sprite = CharacterController();
 
 
     static const List<List<_Demo>> _pages = <List<_Demo>>[
@@ -29,6 +30,7 @@ class _GalleryState extends State<Gallery> {
     <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
     <_Demo>[_Demo.water, _Demo.urchin, _Demo.foil],
     <_Demo>[_Demo.cubeSphere, _Demo.blossom, _Demo.geo],
+    <_Demo>[_Demo.capsule],
   ];
 
   static const Map<_Demo, String> _labels = <_Demo, String>{
@@ -44,6 +46,7 @@ class _GalleryState extends State<Gallery> {
     _Demo.geo:'GeoMorph',
     _Demo.blossom: 'Blossom',
    _Demo.cubeSphere: 'Cube sphere',
+   _Demo.capsule: 'Capsule sprite',
   };
 
   int _page = 0;
@@ -64,6 +67,7 @@ class _GalleryState extends State<Gallery> {
         ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
       _Demo.jelly =>
         JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
+      _Demo.capsule => CapsuleSprite(controller: _sprite, semanticLabel: 'Capsule sprite'),
          _Demo.water => WaterBall(
           waterColor: Color.lerp(colors[1], const Color(0xFFFFFFFF), 0.6)!,
           semanticLabel: 'Water ball',
@@ -129,7 +133,29 @@ class _GalleryState extends State<Gallery> {
               ),
             ],
           ),
-          Expanded(child: _demoFor(colors)),
+          Expanded(
+            child: Stack(
+              children: [
+                Positioned.fill(child: _demoFor(colors)),
+                if (_demo == _Demo.capsule)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(onPressed: _sprite.blink, child: const Text('Blink')),
+                        OutlinedButton(onPressed: _sprite.shake, child: const Text('Shake')),
+                        OutlinedButton(onPressed: _sprite.nod, child: const Text('Nod')),
+                        OutlinedButton(onPressed: _sprite.bounce, child: const Text('Bounce')),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Row(
