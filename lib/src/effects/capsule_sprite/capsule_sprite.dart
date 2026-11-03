@@ -2,10 +2,10 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../api/character_controller.dart';
+import '../../api/character_types.dart';
 import '../../api/effect_controller.dart';
 import '../../api/effect_quality.dart';
 import '../../core/effect_frame.dart';
@@ -73,30 +73,6 @@ double _introLid(double u) {
     return b < 0.4 ? 1 - b / 0.4 : (b - 0.4) / 0.6;
   }
   return 1;
-}
-
-/// How a character feels, shown through its eyes.
-enum CharacterMood {
-  /// Eyes open, blinking now and then.
-  neutral,
-
-  /// Eyes squinted, as in a smile.
-  happy,
-
-  /// Eyes shut and held shut, as when a password is being typed.
-  closed,
-}
-
-/// What a character looks at when nothing from your code is steering it.
-enum PointerFollow {
-  /// It ignores the pointer.
-  off,
-
-  /// It looks at the pointer only while the pointer is over the widget.
-  widget,
-
-  /// It looks at the last touch or mouse position anywhere on the screen.
-  screen,
 }
 
 /// A sprite with two pill eyes, sealed in a thick glass capsule: the upper

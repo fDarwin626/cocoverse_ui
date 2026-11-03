@@ -18,11 +18,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  sensors_plus: ^7.1.1
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -39,3 +42,5 @@ flutter:
     - shaders/foil_ring.frag
     - shaders/geo_morph.frag
     - shaders/capsule_sprite.frag
+    - shaders/clay_bot.frag
+    - shaders/link_chain.frag

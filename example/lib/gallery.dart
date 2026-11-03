@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 
 
-enum _Demo { glossy, starfield, glass, cube, cluster, jelly, water, urchin, foil, geo, blossom, cubeSphere, capsule }
+enum _Demo { glossy, starfield, glass, cube, cluster, clayBot,
+ jelly, 
+urchin, foil, geo, blossom, cubeSphere, capsule, linkChain  }
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
   /// Creates the gallery.
@@ -23,14 +25,14 @@ class _GalleryState extends State<Gallery> {
   _Demo _demo = _Demo.glass;
 int _palette = 0;
 final CharacterController _sprite = CharacterController();
-
+final ClayBotController _bot = ClayBotController();
 
     static const List<List<_Demo>> _pages = <List<_Demo>>[
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
     <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
-    <_Demo>[_Demo.water, _Demo.urchin, _Demo.foil],
+    <_Demo>[ _Demo.urchin, _Demo.foil],
     <_Demo>[_Demo.cubeSphere, _Demo.blossom, _Demo.geo],
-    <_Demo>[_Demo.capsule],
+    <_Demo>[_Demo.capsule, _Demo.clayBot, _Demo.linkChain],
   ];
 
   static const Map<_Demo, String> _labels = <_Demo, String>{
@@ -40,13 +42,14 @@ final CharacterController _sprite = CharacterController();
     _Demo.cube: 'Cube',
     _Demo.cluster: 'Cluster',
     _Demo.jelly: 'Jelly',
-    _Demo.water: 'Water',
     _Demo.urchin: 'Urchin',
     _Demo.foil: 'Foil ring',
     _Demo.geo:'GeoMorph',
     _Demo.blossom: 'Blossom',
    _Demo.cubeSphere: 'Cube sphere',
    _Demo.capsule: 'Capsule sprite',
+   _Demo.clayBot: 'Clay bot',
+   _Demo.linkChain: 'Link chain',
   };
 
   int _page = 0;
@@ -65,13 +68,16 @@ final CharacterController _sprite = CharacterController();
         ParticleCube(colors: colors, semanticLabel: 'Particle cube'),
       _Demo.cluster =>
         ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
+        _Demo.linkChain => LinkChain(colors: colors, semanticLabel: 'Link chain'),
       _Demo.jelly =>
         JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
+      _Demo.clayBot => ClayBot(controller: _bot, walkSpeed: 2.5, colors: [
+        Color.lerp(colors[0], const Color.fromARGB(255, 199, 23, 23), 0.5)!,
+        Color.lerp(colors[1], const Color.fromARGB(255, 6, 30, 168), 0.5)!,
+        Color.lerp(colors[2], const Color(0xFFFFFFFF), 0.5)!,
+      ],
+      entrance: ClayBotEntrance.dropIn, semanticLabel: 'Clay bot'),
       _Demo.capsule => CapsuleSprite(controller: _sprite, semanticLabel: 'Capsule sprite'),
-         _Demo.water => WaterBall(
-          waterColor: Color.lerp(colors[1], const Color(0xFFFFFFFF), 0.6)!,
-          semanticLabel: 'Water ball',
-        ),
         _Demo.urchin => Urchin(colors: colors, quality: EffectQuality.high, semanticLabel: 'Urchin'),
         // _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
             _Demo.foil => FoilRing(colors: colors, semanticLabel: 'Foil ring'),
@@ -137,7 +143,26 @@ final CharacterController _sprite = CharacterController();
             child: Stack(
               children: [
                 Positioned.fill(child: _demoFor(colors)),
-                if (_demo == _Demo.capsule)
+              if (_demo == _Demo.clayBot)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(onPressed: _bot.blink, child: const Text('Blink')),
+                      OutlinedButton(onPressed: _bot.shake, child: const Text('Shake')),
+                      OutlinedButton(onPressed: _bot.nod, child: const Text('Nod')),
+                      OutlinedButton(onPressed: _bot.bounce, child: const Text('Hop')),
+                      OutlinedButton(onPressed: _bot.wave, child: const Text('Wave')),
+                      OutlinedButton(onPressed: () => _bot.walkOff(ClayBotSide.right), child: const Text('Walk off')),
+                      OutlinedButton(onPressed: () => _bot.walkIn(ClayBotSide.left), child: const Text('Walk in')),
+                    ],
+                  ),
+                ),
+              if (_demo == _Demo.capsule)
                   Positioned(
                     bottom: 8,
                     left: 0,
@@ -188,6 +213,3 @@ final CharacterController _sprite = CharacterController();
     );
   }
 }
-
-
-

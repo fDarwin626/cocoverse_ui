@@ -14,7 +14,9 @@ class ExampleApp extends StatelessWidget {
     return MaterialApp(
       title: 'Cocoverse UI example',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(useMaterial3: true),
+      theme: ThemeData.dark(useMaterial3: true).copyWith(
+        scaffoldBackgroundColor: const Color.fromARGB(255, 168, 167, 167),
+      ),
       home: const Gallery(),
     );
   }
