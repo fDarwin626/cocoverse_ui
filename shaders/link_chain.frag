@@ -78,28 +78,30 @@ vec4 map(vec3 p) {
     if (length(p - G.xyz) - G.w > d) {
       continue;
     }
+
     for (int k = 0; k < GSIZE; k++) {
-      int i = g * GSIZE + k;
-      if (float(i) >= uCfg.x) {
+      if (float(g * GSIZE + k) >= uCfg.x) {
         break;
       }
-      vec3 c = uA[i].xyz;
+      vec3 c = uA[g * GSIZE + k].xyz;
       if (length(p - c) - bound > d) {
         continue;
       }
-      vec3 T = uB[i].xyz;
-      vec3 N = uC[i].xyz;
+      vec3 T = uB[g * GSIZE + k].xyz;
+      vec3 N = uC[g * GSIZE + k].xyz;
       vec3 B = cross(T, N);
       vec3 dp = p - c;
       vec3 lp = vec3(dot(dp, N), dot(dp, T), dot(dp, B));
-      vec3 sp = uB[i].w > 0.5 ? vec3(lp.z, lp.y, -lp.x) : lp;
+      vec3 sp = uB[g * GSIZE + k].w > 0.5 ? vec3(lp.z, lp.y, -lp.x) : lp;
       float e = sdLink(sp, le, r1, r2);
       if (e < d) {
         d = e;
-        s = uA[i].w;
+        s = uA[g * GSIZE + k].w;
         lxz = lp.xz;
       }
     }
+
+
   }
   return vec4(d, s, lxz);
 }

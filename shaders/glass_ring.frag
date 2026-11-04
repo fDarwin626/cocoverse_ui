@@ -16,6 +16,7 @@ uniform float uChromatic;
 uniform float uFrost;
 uniform float uSamples;
 uniform vec3 uTint;
+uniform float uLight;
 
 uniform sampler2D uPlate;
 
@@ -61,6 +62,18 @@ vec3 environment(vec3 dir) {
       + smoothstep(0.80, 0.97, dot(dir, right))
       + smoothstep(0.82, 0.97, dot(dir, top)) * 0.9;
   return vec3(0.06) + vec3(boxes) * 1.6;
+}
+
+// A bright studio with dark flags, so reflections show as dark bands on white.
+vec3 environmentLight(vec3 dir) {
+  vec3 left = normalize(vec3(-0.9, 0.15, 0.45));
+  vec3 right = normalize(vec3(0.9, 0.1, 0.45));
+  vec3 top = normalize(vec3(0.0, 1.0, 0.35));
+  float flags = smoothstep(0.70, 0.95, dot(dir, left))
+      + smoothstep(0.70, 0.95, dot(dir, right)) * 0.8
+      + smoothstep(0.80, 0.97, dot(dir, top)) * 0.6;
+  vec3 base = vec3(0.90 + 0.10 * (0.5 + 0.5 * dir.y));
+  return base * (1.0 - min(flags, 1.0) * 0.75);
 }
 
 void main() {
@@ -130,8 +143,8 @@ void main() {
   vec3 bent = refract(-toEye, normal, 1.0 / IOR);
   vec2 offset = bent.xy * 0.2 - lens;
 
-  vec3 reflection = environment(reflect(-toEye, normal));
-
+  vec3 reflectDir = reflect(-toEye, normal);
+  vec3 reflection = mix(environment(reflectDir), environmentLight(reflectDir), uLight);
   // Sample the backdrop three times, shifted a little for red, green and blue.
   float spread = uChromatic * 0.1;
   vec2 uvR = suv + offset * (1.0 + spread);
@@ -168,11 +181,15 @@ void main() {
     seenAlpha /= taps;
   }
 
-  vec3 clearGlass = mix(uTint, reflection, 0.5);
-  vec3 through = mix(clearGlass, seen * uTint, seenAlpha);
+  // Light mode: thick edges absorb light and take the tint, the middle stays clear.
+  float path = 1.0 / max(facing, 0.2) - 1.0;
+  vec3 absorb = exp(-(vec3(0.3) + (1.0 - uTint) * 1.2) * path);
+  vec3 glassTint = mix(uTint, mix(vec3(1.0), uTint, 0.35) * absorb, uLight);
+  vec3 clearGlass = mix(glassTint, reflection, 0.5);
+  vec3 through = mix(clearGlass, seen * glassTint, seenAlpha);
   vec3 color = mix(through, reflection, fresnel * 0.8);
 
-  float baseAlpha = max(0.25, fresnel * 0.85);
+  float baseAlpha = max(mix(0.25, 0.45, uLight), fresnel * 0.85);
   float alpha = mix(baseAlpha, 1.0, seenAlpha) * coverage;
   fragColor = vec4(min(color, vec3(1.0)) * alpha, alpha);
 }

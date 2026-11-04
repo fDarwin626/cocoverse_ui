@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 enum _Demo { glossy, starfield, glass, cube, cluster, clayBot,
  jelly, 
-urchin, foil, geo, blossom, cubeSphere, capsule, linkChain  }
+urchin, foil, geo, blossom, cubeSphere, capsule, linkChain,pisces  }
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
   /// Creates the gallery.
@@ -17,8 +17,8 @@ class Gallery extends StatefulWidget {
 
 class _GalleryState extends State<Gallery> {
   static const List<List<Color>> _palettes = <List<Color>>[
-    <Color>[Color(0xFF7B5CFF), Color(0xFF46D9E8), Color(0xFFFF6FAE)],
-    <Color> [Color.fromARGB(255, 250, 155, 196), Color.fromARGB(255, 240, 204, 232), Color.fromARGB(255, 179, 168, 226)],
+    <Color>[Color.fromARGB(23, 17, 0, 255), Color.fromARGB(255, 138, 3, 131), Color.fromARGB(255, 253, 252, 252)],
+    <Color> [Color.fromARGB(255, 241, 77, 187), Color.fromARGB(255, 203, 71, 255), Color.fromARGB(255, 179, 168, 226)],
     <Color>[Color(0xFF1E8E6A), Color(0xFF34D1BF), Color(0xFF63B7F0)],
   ];
 
@@ -26,11 +26,12 @@ class _GalleryState extends State<Gallery> {
 int _palette = 0;
 final CharacterController _sprite = CharacterController();
 final ClayBotController _bot = ClayBotController();
+PiscesVariant _fish = PiscesVariant.oranda;
 
     static const List<List<_Demo>> _pages = <List<_Demo>>[
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
     <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
-    <_Demo>[ _Demo.urchin, _Demo.foil],
+    <_Demo>[ _Demo.urchin, _Demo.foil, _Demo.pisces],
     <_Demo>[_Demo.cubeSphere, _Demo.blossom, _Demo.geo],
     <_Demo>[_Demo.capsule, _Demo.clayBot, _Demo.linkChain],
   ];
@@ -50,6 +51,7 @@ final ClayBotController _bot = ClayBotController();
    _Demo.capsule: 'Capsule sprite',
    _Demo.clayBot: 'Clay bot',
    _Demo.linkChain: 'Link chain',
+   _Demo.pisces: 'Pisces',
   };
 
   int _page = 0;
@@ -68,15 +70,14 @@ final ClayBotController _bot = ClayBotController();
         ParticleCube(colors: colors, semanticLabel: 'Particle cube'),
       _Demo.cluster =>
         ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
-        _Demo.linkChain => LinkChain(colors: colors, semanticLabel: 'Link chain'),
+        _Demo.linkChain => LinkChain(finish:LinkChainFinish.metallic,metalColor:Color.fromARGB(255, 250, 208, 110), semanticLabel: 'Link chain'),
       _Demo.jelly =>
         JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
-      _Demo.clayBot => ClayBot(controller: _bot, walkSpeed: 2.5, colors: [
-        Color.lerp(colors[0], const Color.fromARGB(255, 199, 23, 23), 0.5)!,
-        Color.lerp(colors[1], const Color.fromARGB(255, 6, 30, 168), 0.5)!,
-        Color.lerp(colors[2], const Color(0xFFFFFFFF), 0.5)!,
-      ],
-      entrance: ClayBotEntrance.dropIn, semanticLabel: 'Clay bot'),
+      _Demo.clayBot => ClayBot(controller: _bot, walkSpeed: 3.5, 
+      entrance: ClayBotEntrance.dropIn,
+      colors: colors,
+      semanticLabel: 'Clay bot'),
+      _Demo.pisces => Pisces( variant:_fish , semanticLabel: 'Pisces'),
       _Demo.capsule => CapsuleSprite(controller: _sprite, semanticLabel: 'Capsule sprite'),
         _Demo.urchin => Urchin(colors: colors, quality: EffectQuality.high, semanticLabel: 'Urchin'),
         // _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
@@ -162,7 +163,30 @@ final ClayBotController _bot = ClayBotController();
                     ],
                   ),
                 ),
+              if (_demo == _Demo.pisces)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _fish = PiscesVariant.oranda),
+                        child: const Text('Oranda'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _fish = PiscesVariant.redCap),
+                        child: const Text('Red cap'),
+                      ),
+                    ],
+                  ),
+                ),
               if (_demo == _Demo.capsule)
+
                   Positioned(
                     bottom: 8,
                     left: 0,

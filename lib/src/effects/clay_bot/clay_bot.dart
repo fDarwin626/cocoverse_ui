@@ -937,7 +937,7 @@ class _ClayBotState extends State<ClayBot> {
           }
         }
 
-        final boost = (_entPhase == 3 || _exiting) ? 3.0 : 1.0;
+        final boost = (_entPhase == 3 || _exiting) ? 1.3 : 1.0;
         final vmax = _walkUnitsPerSecond * widget.walkSpeed * boost;
         var left = elapsed;
         while (left > 0) {

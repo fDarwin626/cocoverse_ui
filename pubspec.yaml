@@ -44,3 +44,4 @@ flutter:
     - shaders/capsule_sprite.frag
     - shaders/clay_bot.frag
     - shaders/link_chain.frag
+    - shaders/pisces.frag

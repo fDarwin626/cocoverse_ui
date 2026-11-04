@@ -37,7 +37,8 @@ class GlassRing extends StatefulWidget {
     this.thickness = 0.32,
     this.backdropText,
     this.backdropStyle,
-    this.backdropColor = const Color(0xFF000000),
+    this.backdropColor = const ui.Color.fromARGB(255, 0, 0, 0),
+    this.brightness,
     this.background,
     this.speed = 1.0,
     this.spin = 1.0,
@@ -72,6 +73,11 @@ class GlassRing extends StatefulWidget {
 
   /// Fill behind the backdrop text.
   final Color backdropColor;
+
+  /// Whether the effect sits on a light or a dark surface. Null works it out
+  /// from [backdropColor] (when there is backdrop text) or [background].
+  /// Light switches to a glass look that reads on white.
+  final ui.Brightness? brightness;
 
   /// Fill behind the whole effect. Null means transparent.
   final Color? background;
@@ -142,6 +148,17 @@ class _GlassRingState extends State<GlassRing> {
     super.dispose();
   }
 
+
+  bool get _isLight {
+    final forced = widget.brightness;
+    if (forced != null) return forced == ui.Brightness.light;
+    final text = widget.backdropText;
+    final base = (text != null && text.isNotEmpty)
+        ? widget.backdropColor
+        : widget.background;
+    return base != null && base.computeLuminance() > 0.5;
+  }
+
   /// Redraws the backdrop image when the size, text or colours change.
   void _requestPlate(Size size, double dpr) {
     final key = Object.hash(
@@ -151,6 +168,7 @@ class _GlassRingState extends State<GlassRing> {
       widget.backdropText,
       widget.backdropColor,
       widget.backdropStyle,
+      widget.brightness,
     );
     if (key == _plateKey) return;
     _plateKey = key;
@@ -179,7 +197,8 @@ class _GlassRingState extends State<GlassRing> {
           text: text,
           style: widget.backdropStyle ??
               TextStyle(
-                color: const Color(0xFFFFFFFF),
+                color:
+                    _isLight ? const Color(0xFF14181F) : const Color(0xFFFFFFFF),
                 fontSize: size.shortestSide * 0.2,
                 fontWeight: FontWeight.w800,
                 height: 1.05,
@@ -287,6 +306,7 @@ class _GlassRingState extends State<GlassRing> {
       ..setFloat(19, widget.tint.r)
       ..setFloat(20, widget.tint.g)
       ..setFloat(21, widget.tint.b)
+      ..setFloat(22, _isLight ? 1.0 : 0.0)
       ..setImageSampler(0, plate);
 
     // The shader is only valid once its image sampler is set, so the Paint is
