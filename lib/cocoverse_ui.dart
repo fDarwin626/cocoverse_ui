@@ -21,3 +21,4 @@ export 'src/effects/capsule_sprite/capsule_sprite.dart';
 export 'src/effects/clay_bot/clay_bot.dart';
 export 'src/effects/link_chain/link_chain.dart';
 export 'src/effects/pisces/pisces.dart';
+export 'src/api/pisces_controller.dart';

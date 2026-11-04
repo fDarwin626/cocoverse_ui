@@ -21,7 +21,7 @@ out vec4 fragColor;
 const float PI = 3.14159265;
 const float SE_P = 2.3;
 const float SNOUT = 0.10;
-const float BUTT = 0.09;
+const float BUTT = 0.07;
 const float M_CORNER = 0.1;
 // the eye in rest body coordinates: x forward from mid-body, y up, radius
 const vec3 EYE = vec3(0.35, 0.02, 0.05);

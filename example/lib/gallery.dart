@@ -27,6 +27,10 @@ int _palette = 0;
 final CharacterController _sprite = CharacterController();
 final ClayBotController _bot = ClayBotController();
 PiscesVariant _fish = PiscesVariant.oranda;
+PiscesMode _fishMode = PiscesMode.idle;
+bool _fishActive = false;
+final PiscesController _fishCtl = PiscesController();
+
 
     static const List<List<_Demo>> _pages = <List<_Demo>>[
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
@@ -64,12 +68,14 @@ PiscesVariant _fish = PiscesVariant.oranda;
   }
 
 
+
   Widget _demoFor(List<Color> colors) {
     return switch (_demo) {
          _Demo.cube =>
         ParticleCube(colors: colors, semanticLabel: 'Particle cube'),
       _Demo.cluster =>
         ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
+      // _Demo.linkChain => _linkChainTest(),
         _Demo.linkChain => LinkChain(finish:LinkChainFinish.metallic,metalColor:Color.fromARGB(255, 250, 208, 110), semanticLabel: 'Link chain'),
       _Demo.jelly =>
         JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
@@ -77,7 +83,13 @@ PiscesVariant _fish = PiscesVariant.oranda;
       entrance: ClayBotEntrance.dropIn,
       colors: colors,
       semanticLabel: 'Clay bot'),
-      _Demo.pisces => Pisces( variant:_fish , semanticLabel: 'Pisces'),
+        _Demo.pisces => Pisces(
+          variant: _fish,
+          mode: _fishMode,
+          active: _fishActive,
+          controller: _fishCtl,
+          semanticLabel: 'Pisces',
+        ),
       _Demo.capsule => CapsuleSprite(controller: _sprite, semanticLabel: 'Capsule sprite'),
         _Demo.urchin => Urchin(colors: colors, quality: EffectQuality.high, semanticLabel: 'Urchin'),
         // _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
@@ -180,7 +192,40 @@ PiscesVariant _fish = PiscesVariant.oranda;
                       OutlinedButton(
                         onPressed: () =>
                             setState(() => _fish = PiscesVariant.redCap),
+
                         child: const Text('Red cap'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          _fishMode = _fishMode == PiscesMode.idle
+                              ? PiscesMode.visit
+                              : PiscesMode.idle;
+                        }),
+                        child: Text(
+                            'Mode: ${_fishMode == PiscesMode.idle ? 'idle' : 'visit'}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _fishActive = !_fishActive),
+                        child: Text('Active: $_fishActive'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => _fishCtl.swim(
+                            from: PiscesSide.top, to: PiscesSide.bottom),
+                        child: const Text('Swim down'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => _fishCtl.swim(
+                            from: PiscesSide.left, to: PiscesSide.right),
+                        child: const Text('Swim across'),
+                      ),
+                      OutlinedButton(
+                        onPressed: _fishCtl.kill,
+                        child: const Text('Catch'),
+                      ),
+                      OutlinedButton(
+                        onPressed: _fishCtl.rest,
+                        child: const Text('Rest'),
                       ),
                     ],
                   ),
