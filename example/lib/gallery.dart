@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 
 enum _Demo { glossy, starfield, glass, cube, cluster, clayBot,
- jelly, 
+ jelly,timeline,halo,hourglass,plush,
 urchin, foil, geo, blossom, cubeSphere, capsule, linkChain,pisces  }
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
@@ -30,6 +30,16 @@ PiscesVariant _fish = PiscesVariant.oranda;
 PiscesMode _fishMode = PiscesMode.idle;
 bool _fishActive = false;
 final PiscesController _fishCtl = PiscesController();
+HaloFinish _haloFinish = HaloFinish.metallic;
+double? _haloProgress;
+bool _haloCenter = false;
+double _hgFocus = 100;
+bool _hgCustom = false;
+HourglassMotion _hgMotion = HourglassMotion.flowUp;
+double? _plushProgress;
+double _plushSpeed = 50;
+bool _plushChild = false;
+int _plushColour = 0;
 
 
     static const List<List<_Demo>> _pages = <List<_Demo>>[
@@ -38,6 +48,9 @@ final PiscesController _fishCtl = PiscesController();
     <_Demo>[ _Demo.urchin, _Demo.foil, _Demo.pisces],
     <_Demo>[_Demo.cubeSphere, _Demo.blossom, _Demo.geo],
     <_Demo>[_Demo.capsule, _Demo.clayBot, _Demo.linkChain],
+    <_Demo>[_Demo.timeline, _Demo.halo, _Demo.hourglass],
+    <_Demo>[_Demo.plush],
+
   ];
 
   static const Map<_Demo, String> _labels = <_Demo, String>{
@@ -56,6 +69,10 @@ final PiscesController _fishCtl = PiscesController();
    _Demo.clayBot: 'Clay bot',
    _Demo.linkChain: 'Link chain',
    _Demo.pisces: 'Pisces',
+   _Demo.timeline: 'Timeline',
+   _Demo.halo: 'Halo',
+   _Demo.hourglass: 'Hourglass',
+   _Demo.plush: "Plush",
   };
 
   int _page = 0;
@@ -81,9 +98,89 @@ final PiscesController _fishCtl = PiscesController();
         JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
       _Demo.clayBot => ClayBot(controller: _bot, walkSpeed: 3.5, 
       entrance: ClayBotEntrance.dropIn,
-      colors: colors,
       semanticLabel: 'Clay bot'),
-        _Demo.pisces => Pisces(
+        _Demo.timeline => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: AspectRatio(
+            aspectRatio: 3 / 4,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              // Your photos go in `images:` here. Empty shows "Your photo here".
+              child: const Timeline(
+                images: [
+                  AssetImage('assets/photos/one.jpg'),
+                  AssetImage('assets/photos/two.jpg'),
+                  AssetImage('assets/photos/three.jpg'),
+                ],
+                semanticLabel: 'Timeline',
+              ),
+
+            ),
+          ),
+        ),
+      ),
+_Demo.plush => Plush(
+        background: const Color(0xFF000000),
+        fur: const [
+          Color(0xFF0074FF),
+          Color(0xFFFF4D8D),
+          Color(0xFF34D1BF),
+          Color(0xFFFFA62B),
+        ][_plushColour],
+        progress: _plushProgress,
+        speed: _plushSpeed,
+        semanticLabel: 'Plush',
+        child: _plushChild
+            ? Text(
+                _plushProgress == null
+                    ? 'Loading'
+                    : '${(_plushProgress! * 100).round()}%',
+                style: const TextStyle(
+                  color: Color(0xFFFFFFFF),
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                ),
+              )
+            : null,
+      ),
+      _Demo.hourglass => Hourglass(
+
+        focus: _hgFocus,
+        colors: _hgCustom
+            ? const [
+                Color(0xFFFF9F1C),
+                Color(0xFF34D1BF),
+                Color(0xFF7B5CFF),
+                Color(0xFFF03CB4),
+              ]
+            : null,
+        motion: _hgMotion,
+        semanticLabel: 'Hourglass',
+      ),
+      _Demo.halo => Center(
+        child: SizedBox(
+          width: 300,
+          height: 300,
+          child: Halo(
+            finish: _haloFinish,
+            progress: _haloProgress,
+            semanticLabel: 'Halo',
+            child: _haloCenter
+                ? Text(
+                    _haloProgress == null
+                        ? '...'
+                        : '${(_haloProgress! * 100).round()}%',
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  )
+                : null,
+          ),
+        ),
+      ),
+      _Demo.pisces => Pisces(
           variant: _fish,
           mode: _fishMode,
           active: _fishActive,
@@ -91,7 +188,7 @@ final PiscesController _fishCtl = PiscesController();
           semanticLabel: 'Pisces',
         ),
       _Demo.capsule => CapsuleSprite(controller: _sprite, semanticLabel: 'Capsule sprite'),
-        _Demo.urchin => Urchin(colors: colors, quality: EffectQuality.high, semanticLabel: 'Urchin'),
+        _Demo.urchin => Urchin( quality: EffectQuality.high, semanticLabel: 'Urchin'),
         // _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
             _Demo.foil => FoilRing(colors: colors, semanticLabel: 'Foil ring'),
       _Demo.geo => GeoMorph(
@@ -111,7 +208,7 @@ final PiscesController _fishCtl = PiscesController();
         StarfieldSphere(colors: colors, semanticLabel: 'Starfield sphere'),
       _Demo.glass => GlassRing(
           tint: Color.lerp(colors[1], const Color(0xFFFFFFFF), 0.5)!,
-          backdropText: 'GLASS\nRING',
+          backdropText: 'COCO\nVERSE',
           semanticLabel: 'Glass ring',
         ),
     };
@@ -226,6 +323,116 @@ final PiscesController _fishCtl = PiscesController();
                       OutlinedButton(
                         onPressed: _fishCtl.rest,
                         child: const Text('Rest'),
+                      ),
+                    ],
+                  ),
+                ),
+              if (_demo == _Demo.plush)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          final p = _plushProgress;
+                          _plushProgress =
+                              p == null ? 0 : (p >= 1 ? null : p + 0.25);
+                        }),
+                        child: Text(
+                          _plushProgress == null
+                              ? 'Progress: off'
+                              : 'Progress: ${(_plushProgress! * 100).round()}%',
+                        ),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          _plushSpeed = _plushSpeed == 50
+                              ? 100
+                              : (_plushSpeed == 100 ? 12 : (_plushSpeed == 12 ? 0 : 50));
+                        }),
+                        child: Text('Speed: ${_plushSpeed.round()}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _plushColour = (_plushColour + 1) % 4),
+                        child: const Text('Fur colour'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _plushChild = !_plushChild),
+                        child: Text('Centre: ${_plushChild ? 'on' : 'off'}'),
+                      ),
+                    ],
+                  ),
+                ),
+              if (_demo == _Demo.hourglass)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          _hgFocus = _hgFocus > 80
+                              ? 60
+                              : (_hgFocus > 45 ? 30 : (_hgFocus > 15 ? 8 : 100));
+                        }),
+                        child: Text('Focus: ${_hgFocus.round()}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() => _hgCustom = !_hgCustom),
+                        child: Text('Colours: ${_hgCustom ? 'custom' : 'original'}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          final all = HourglassMotion.values;
+                          _hgMotion = all[(_hgMotion.index + 1) % all.length];
+                        }),
+                        child: Text('Motion: ${_hgMotion.name}'),
+                      ),
+                    ],
+                  ),
+                ),
+              if (_demo == _Demo.halo)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          _haloFinish = _haloFinish == HaloFinish.metallic
+                              ? HaloFinish.cartoon
+                              : HaloFinish.metallic;
+                        }),
+                        child: Text('Finish: ${_haloFinish.name}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          final p = _haloProgress;
+                          _haloProgress =
+                              p == null ? 0 : (p >= 1 ? null : p + 0.25);
+                        }),
+                        child: Text(
+                          _haloProgress == null
+                              ? 'Progress: off'
+                              : 'Progress: ${(_haloProgress! * 100).round()}%',
+                        ),
+                      ),
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _haloCenter = !_haloCenter),
+                        child: Text('Centre: ${_haloCenter ? 'on' : 'off'}'),
                       ),
                     ],
                   ),

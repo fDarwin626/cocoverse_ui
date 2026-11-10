@@ -22,3 +22,7 @@ export 'src/effects/clay_bot/clay_bot.dart';
 export 'src/effects/link_chain/link_chain.dart';
 export 'src/effects/pisces/pisces.dart';
 export 'src/api/pisces_controller.dart';
+export 'src/effects/timeline/timeline.dart';
+export 'src/effects/halo/halo.dart';
+export 'src/effects/hourglass/hourglass.dart';
+export 'src/effects/plush/plush.dart';

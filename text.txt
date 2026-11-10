@@ -1,0 +1,176 @@
+### 2.11 Timeline (from Image Flipper)
+
+A stack of photos that flip over one after another, tile by tile, like a
+split-flap board. You give it any number of pictures and it animates through
+them. How big it shows (full screen, half a screen, a small card) is decided
+by whoever uses it, by sizing its parent. Timeline fills whatever box it is
+given.
+
+Files:
+
+| File | Job |
+|---|---|
+| `lib/src/effects/timeline/timeline.dart` | The whole effect: widget, loading, tile animation |
+| `lib/cocoverse_ui.dart` | Contains `export 'src/effects/timeline/timeline.dart';` |
+| `example/lib/gallery.dart` | Demo on page 6 of 6, button "Timeline" |
+| `example/assets/photos/` | The three test photos, `one.jpg`, `two.jpg`, `three.jpg` |
+| `example/pubspec.yaml` | Lists `assets/photos/` under `flutter: assets:` |
+
+There is no shader, no new dependency and no `pubspec` change in the package.
+It draws with a plain canvas through `EffectHost`, the same host the other
+effects use.
+
+Smallest example (it needs a bounded size from its parent):
+```dart
+SizedBox(
+  height: 240,
+  child: Timeline(
+    images: [AssetImage('assets/a.jpg'), AssetImage('assets/b.jpg')],
+  ),
+)
+```
+
+With no `images` it shows its own "Your photo here" placeholder slides, so it
+can be tried before any photo exists.
+
+#### Parameters
+
+| Parameter | Type | Default | Expects |
+|---|---|---|---|
+| `images` | `List<ImageProvider>` | empty | Any number of photos: `AssetImage`, `NetworkImage`, `MemoryImage`. Empty shows placeholders |
+| `placeholderCount` | `int` | 3 | How many placeholder slides when `images` is empty |
+| `placeholderLabel` | `String` | `'Your photo here'` | The words on each placeholder slide |
+| `focusY` | `double` | 50 | 0 (top) to 100 (bottom). Where a photo taller than the box is anchored. Applies to every photo |
+| `tiles` | `int` | 50 | 4 to 120 tiles across. Tiles are square, so the number down follows the box shape. Also capped by `quality` (see below) |
+| `angle` | `double` | 77 | Sweep direction in degrees. 0 sweeps left to right, 90 top to bottom |
+| `flip` | `double` | 50 | 5 to 100. Share of the transition each tile spends flipping. The rest is the delay between the first tile and the last |
+| `duration` | `Duration` | 1200 ms | Time for one photo to flip in |
+| `hold` | `Duration` | 1 s | How long a landed photo stays before the next one starts |
+| `curve` | `Curve` | `Curves.linear` | Shapes the sweep across the tiles. Linear is an even wave |
+| `loop` | `bool` | true | false stops on the last photo |
+| `maxImageSize` | `int` | 2048 | Longest side, in pixels, a photo is decoded at. Larger photos are shrunk while loading. Never enlarged |
+| `paused` | `bool` | false | Freezes the animation |
+| `quality` | `EffectQuality` | `high` | Lower tiers draw fewer tiles and use a lighter image filter |
+| `background` | `Color?` | null | Fill behind the photos. Null is transparent |
+| `controller` | `EffectController?` | null | `reset()` starts again from the first photo |
+| `semanticLabel` | `String?` | null | Screen reader text. Null marks it decorative |
+
+Values outside the ranges are clamped, not rejected.
+
+#### How it behaves
+
+1. **First photo.** It builds itself from blank tiles. Every later photo flips in over the one before it.
+2. **Direction.** The sweep reverses on every photo (odd photos run backwards), as in the original.
+3. **Mid flip.** A flipping tile shows a shuffled piece of the new photo, squashed vertically between 12% and 100% of its height. The number of flaps is `duration x flip` divided by about 110 ms, kept between 2 and 6.
+4. **Holding.** Once every tile has landed, the photo is drawn as one image, not as thousands of tiles. A held photo costs one draw per frame.
+5. **One photo.** It flips in and stays. Cycling needs at least two loaded photos.
+6. **Loading.** Photos load in the background. It waits on the photo it is about to show and skips any that have not arrived or failed. A failed photo prints `Timeline: could not load photo N` in the console.
+7. **Changing `images`.** A different list reloads everything and starts from the first photo. The same photos in a new list (for example a rebuilt list of `AssetImage`s) do not reload.
+8. **Reduced motion.** If the system asks for less movement, it shows the first photo still and never cycles.
+9. **Stalls.** The internal clock moves at most 0.1 s per frame, so a slow frame or a pause never skips ahead.
+10. **Seams.** Tiles overlap their neighbours by 0.75 logical pixels and are drawn without edge smoothing, so no hairlines show between them.
+
+#### Tile count and quality
+
+Drawing thousands of tiles every frame is the expensive part, so the count is
+capped by shape and by `quality`. The number across is the smaller of `tiles`
+and `sqrt(cap x width / height)`, where `cap` is:
+
+| `quality` | Total tiles at most about | Image filter |
+|---|---|---|
+| `low` | 1200 | low |
+| `medium` | 2200 | medium |
+| `high` | 3600 | medium |
+
+A tall full-screen box therefore gets fewer tiles across than a wide one.
+
+#### Sizing
+
+```dart
+// Full screen
+SizedBox.expand(child: Timeline(images: photos))
+
+// Half the screen height
+SizedBox(
+  height: MediaQuery.sizeOf(context).height / 2,
+  child: Timeline(images: photos),
+)
+
+// A small thumbnail
+SizedBox(width: 160, height: 120, child: Timeline(images: photos))
+
+// Rounded corners: wrap it
+ClipRRect(
+  borderRadius: BorderRadius.circular(24),
+  child: Timeline(images: photos),
+)
+```
+
+#### More examples
+
+Slower, softer sweep:
+```dart
+Timeline(
+  images: photos,
+  duration: const Duration(milliseconds: 2000),
+  hold: const Duration(seconds: 3),
+  curve: Curves.easeInOut,
+  tiles: 30,
+)
+```
+
+Top to bottom, stops on the last photo:
+```dart
+Timeline(images: photos, angle: 90, loop: false)
+```
+
+Start again from the first photo:
+```dart
+final timeline = EffectController();
+// in build:
+Timeline(images: photos, controller: timeline);
+// on a button:
+timeline.reset();
+```
+
+Photos from the internet (on the web the server must allow cross-origin
+requests, or the photo will not load):
+```dart
+Timeline(images: [NetworkImage('https://example.com/photo.jpg')])
+```
+
+#### Placeholders
+
+When `images` is empty, Timeline paints its own slides: 1000 by 1000
+pixels, a diagonal gradient (gold, teal, coral, violet in turn), a large pale
+number, the `placeholderLabel` and "N of M". They go through exactly the same
+animation as real photos. Note that an empty list means placeholders, so
+do not pass an empty list while real photos are still being fetched.
+
+#### Differences from the original Image Flipper
+
+1. Photos are `ImageProvider`s, not URLs.
+2. One `focusY` for all photos, not one per photo.
+3. No `animate` flag. Use `paused`.
+4. Held photos are drawn whole, where the original redrew every tile on every frame forever.
+5. Photos are decoded at no more than `maxImageSize`.
+6. The tile count is capped by `quality`.
+7. It follows the system reduced-motion setting.
+
+#### Things to know
+
+1. A new file or new asset needs a full restart (`q`, then `flutter run -d chrome`). Hot reload and hot restart can miss it.
+2. Its parent must give it a bounded height. Inside a `Column`, wrap it in `Expanded` or `SizedBox`.
+3. Flutter's own `dart:developer` also has a class called `Timeline`. If a file imports both, write `import 'dart:developer' hide Timeline;`.
+4. It does not react to touch.
+
+#### Not yet checked
+
+1. Frame rate on a real phone, and whether the tile caps are right for it.
+2. Very large boxes (full screen on a tablet) at each `quality` tier.
+3. `NetworkImage` on the web with a cross-origin photo.
+4. The unit test for this effect has not been written yet.
+
+---
+
+## 3. LinkChain lock prototype (gallery only, not a package widget yet)
