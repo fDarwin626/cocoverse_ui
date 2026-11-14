@@ -1,7 +1,6 @@
 {{flutter_js}}
 {{flutter_build_config}}
 
-/***----------
 // The website runs one Flutter engine and gives every phone its own view.
 _flutter.loader.load({
   config: {
@@ -20,7 +19,7 @@ _flutter.loader.load({
     window.dispatchEvent(new Event("cocoverse-flutter-ready"));
   },
 });
-------------------- */
+
 
 
 // --- STANDARD DEFAULT LOADER FOR LOCAL PREVIEW ---

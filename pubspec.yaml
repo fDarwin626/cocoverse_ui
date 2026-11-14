@@ -45,3 +45,5 @@ flutter:
     - shaders/clay_bot.frag
     - shaders/link_chain.frag
     - shaders/pisces.frag
+    - shaders/mito.frag
+    - shaders/meteor_rock.frag

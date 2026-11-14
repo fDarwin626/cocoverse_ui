@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 
 enum _Demo { glossy, starfield, glass, cube, cluster, clayBot,
- jelly,timeline,halo,hourglass,plush,
-urchin, foil, geo, blossom, cubeSphere, capsule, linkChain,pisces  }
+ jelly,timeline,halo,hourglass,plush,mito,moonbloom,
+urchin, foil, geo, blossom, cubeSphere, capsule, linkChain,pisces,
+fireworks, meteor,} 
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
   /// Creates the gallery.
@@ -26,6 +27,7 @@ class _GalleryState extends State<Gallery> {
 int _palette = 0;
 final CharacterController _sprite = CharacterController();
 final ClayBotController _bot = ClayBotController();
+final MitoController _mito = MitoController();
 PiscesVariant _fish = PiscesVariant.oranda;
 PiscesMode _fishMode = PiscesMode.idle;
 bool _fishActive = false;
@@ -40,7 +42,18 @@ double? _plushProgress;
 double _plushSpeed = 50;
 bool _plushChild = false;
 int _plushColour = 0;
-
+MoonbloomSide _mbSide = MoonbloomSide.left;
+double _mbBlur = 0;
+double _mbDim = 0;
+final EffectController _fwCtl = EffectController();
+FireworksTextAnimation _fwAnim = FireworksTextAnimation.blur;
+bool _fwText = true;
+final EffectController _mtCtl = EffectController();
+MeteorShape _mtShape = MeteorShape.plus;
+int _mtColour = 0;
+bool _mtDrag = true;
+bool _mtPush = true;
+bool _mtPaused = false;
 
     static const List<List<_Demo>> _pages = <List<_Demo>>[
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
@@ -49,7 +62,8 @@ int _plushColour = 0;
     <_Demo>[_Demo.cubeSphere, _Demo.blossom, _Demo.geo],
     <_Demo>[_Demo.capsule, _Demo.clayBot, _Demo.linkChain],
     <_Demo>[_Demo.timeline, _Demo.halo, _Demo.hourglass],
-    <_Demo>[_Demo.plush],
+    <_Demo>[_Demo.plush, _Demo.mito, _Demo.moonbloom],
+    <_Demo>[ _Demo.fireworks,_Demo.meteor],
 
   ];
 
@@ -73,6 +87,10 @@ int _plushColour = 0;
    _Demo.halo: 'Halo',
    _Demo.hourglass: 'Hourglass',
    _Demo.plush: "Plush",
+   _Demo.mito: "Mito",
+   _Demo.moonbloom: "Moonbloom",
+   _Demo.fireworks: "Fireworks",
+   _Demo.meteor:" Meteor",
   };
 
   int _page = 0;
@@ -92,7 +110,7 @@ int _plushColour = 0;
         ParticleCube(colors: colors, semanticLabel: 'Particle cube'),
       _Demo.cluster =>
         ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
-      // _Demo.linkChain => _linkChainTest(),
+        _Demo.mito => Mito(controller: _mito, semanticLabel: 'Mito sphere'),
         _Demo.linkChain => LinkChain(finish:LinkChainFinish.metallic,metalColor:Color.fromARGB(255, 250, 208, 110), semanticLabel: 'Link chain'),
       _Demo.jelly =>
         JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
@@ -143,6 +161,41 @@ _Demo.plush => Plush(
                 ),
               )
             : null,
+      ),
+    _Demo.meteor => ColoredBox(
+        color: const Color(0xFF0B0B0F),
+        child: Meteor(
+          controller: _mtCtl,
+          shape: _mtShape,
+          shapeColor: const [
+            Color(0xFFEDEFF5),
+            Color(0xFF7BD8FF),
+            Color(0xFFFFD166),
+            Color(0xFFFF4D8D),
+          ][_mtColour],
+          dragToRotate: _mtDrag,
+          touchPush: _mtPush,
+          paused: _mtPaused,
+          semanticLabel: 'Meteor',
+        ),
+      ),
+      _Demo.fireworks => ColoredBox(
+        color: const Color(0xFF0B1030),
+        child: Fireworks(
+          controller: _fwCtl,
+          duration: const Duration(seconds: 8),
+          title: _fwText ? 'Well done!' : null,
+          subtitle: _fwText ? 'Your account is ready' : null,
+          titleAnimation: _fwAnim,
+          semanticLabel: 'Fireworks',
+        ),
+      ),
+      _Demo.moonbloom => Moonbloom(
+        side: _mbSide,
+        background: const Color(0xFF000000),
+        blur: _mbBlur,
+        dim: _mbDim,
+        semanticLabel: 'Moonbloom',
       ),
       _Demo.hourglass => Hourglass(
 
@@ -272,6 +325,26 @@ _Demo.plush => Plush(
                     ],
                   ),
                 ),
+
+                      if (_demo == _Demo.mito)
+                    Positioned(
+                      bottom: 8,
+                      left: 0,
+                      right: 0,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 8,
+                        children: [
+                          OutlinedButton(onPressed: _mito.blink, child: const Text('Blink')),
+                          OutlinedButton(onPressed: _mito.shake, child: const Text('Shake')),
+                          OutlinedButton(onPressed: _mito.nod, child: const Text('Nod')),
+                          OutlinedButton(onPressed: _mito.bounce, child: const Text('Hop')),
+                          OutlinedButton(onPressed: _mito.wave, child: const Text('Wave')),
+                          OutlinedButton(onPressed: () => _mito.flyOff(MitoSide.right), child: const Text('Fly off')),
+                          OutlinedButton(onPressed: () => _mito.flyIn(MitoSide.left), child: const Text('Fly in')),
+                        ],
+                      ),
+                    ),
               if (_demo == _Demo.pisces)
                 Positioned(
                   bottom: 8,
@@ -365,6 +438,113 @@ _Demo.plush => Plush(
                         onPressed: () =>
                             setState(() => _plushChild = !_plushChild),
                         child: Text('Centre: ${_plushChild ? 'on' : 'off'}'),
+                      ),
+                    ],
+                  ),
+                ),
+              if (_demo == _Demo.meteor)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: _mtCtl.reset,
+                        child: const Text('Replay'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          final all = MeteorShape.values;
+                          _mtShape = all[(_mtShape.index + 1) % all.length];
+                        }),
+                        child: Text('Shape: ${_mtShape.name}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _mtColour = (_mtColour + 1) % 4),
+                        child: const Text('Colour'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() => _mtDrag = !_mtDrag),
+                        child: Text('Drag: ${_mtDrag ? 'on' : 'off'}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() => _mtPush = !_mtPush),
+                        child: Text('Push: ${_mtPush ? 'on' : 'off'}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() => _mtPaused = !_mtPaused),
+                        child: Text('Paused: $_mtPaused'),
+                      ),
+                    ],
+                  ),
+                ),
+              if (_demo == _Demo.fireworks)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: _fwCtl.reset,
+                        child: const Text('Replay'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() => _fwText = !_fwText);
+                          _fwCtl.reset();
+                        },
+                        child: Text('Text: ${_fwText ? 'on' : 'off'}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            final all = FireworksTextAnimation.values;
+                            _fwAnim = all[(_fwAnim.index + 1) % all.length];
+                          });
+                          _fwCtl.reset();
+                        },
+                        child: Text('Animation: ${_fwAnim.name}'),
+                      ),
+                    ],
+                  ),
+                ),
+              if (_demo == _Demo.moonbloom)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          _mbSide = _mbSide == MoonbloomSide.left
+                              ? MoonbloomSide.right
+                              : MoonbloomSide.left;
+                        }),
+                        child: Text('Side: ${_mbSide.name}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          _mbBlur = _mbBlur == 0
+                              ? 35
+                              : (_mbBlur == 35 ? 60 : (_mbBlur == 60 ? 100 : 0));
+                        }),
+                        child: Text('Blur: ${_mbBlur.round()}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(() {
+                          _mbDim = _mbDim == 0 ? 30 : (_mbDim == 30 ? 60 : 0);
+                        }),
+                        child: Text('Dim: ${_mbDim.round()}'),
                       ),
                     ],
                   ),

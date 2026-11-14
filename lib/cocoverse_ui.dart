@@ -26,3 +26,7 @@ export 'src/effects/timeline/timeline.dart';
 export 'src/effects/halo/halo.dart';
 export 'src/effects/hourglass/hourglass.dart';
 export 'src/effects/plush/plush.dart';
+export 'src/effects/mito/mito.dart';
+export 'src/effects/moonbloom/moonbloom.dart';
+export 'src/effects/fireworks/fireworks.dart';
+export 'src/effects/meteor/meteor.dart';

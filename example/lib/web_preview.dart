@@ -117,6 +117,7 @@ class _EffectView extends StatefulWidget {
 class _EffectViewState extends State<_EffectView> {
   final CharacterController _sprite = CharacterController();
   final ClayBotController _bot = ClayBotController();
+  final MitoController _mito = MitoController();
   late final String _slug;
   late final bool _low;
   late final Widget _effect;
@@ -148,6 +149,7 @@ class _EffectViewState extends State<_EffectView> {
   void dispose() {
     _sprite.dispose();
     _bot.dispose();
+    _mito.dispose();
     super.dispose();
   }
 
@@ -225,6 +227,29 @@ class _EffectViewState extends State<_EffectView> {
       // A shorter bloom, so it has finished by the end of the phone's two-second warm-up.
       'hourglass' => Hourglass(entranceStagger: 2.0, quality: quality),
       'halo' => Halo(tint: const Color(0xFFE8B64A), quality: quality),
+            'fireworks' => Fireworks(
+          loop: true,
+          title: 'Well done!',
+          subtitle: 'Your account is ready',
+          titleStyle: const TextStyle(fontSize: 30),
+          quality: quality,
+        ),
+      'meteor' => Meteor(
+          shape: MeteorShape.plus,
+          shapeColor: Color.lerp(c[1], const Color(0xFFFFFFFF), 0.5)!,
+          quality: quality,
+        ),
+      'mito' => Mito(
+          controller: _mito,
+          entrance: MitoEntrance.powerUp,
+          ringGlow: 1.0,
+          quality: quality,
+        ),
+      'moonbloom' => Moonbloom(
+          side: MoonbloomSide.right,
+          background: const Color(0xFF0A090D),
+          quality: quality,
+        ),
       // Plush is ready here, but it is not on the website's list until its docs exist.
       'plush' => Plush(fur: c[0], background: const Color(0xFF000000)),
       _ => const Center(

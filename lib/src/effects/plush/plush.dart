@@ -33,7 +33,6 @@ const double _lightAngle = -20 * _deg;
 const double _lightElev = 40 * _deg;
 const double _ambient = 0.32;
 const double _specular = 0.7;
-const double _shine = 30;
 
 // The coat.
 const double _strandTilt = 0.3;
@@ -60,6 +59,14 @@ const int _furStride = 16;
 const int _maxStrands = 12000;
 const int _maxRibV = 3000;
 const int _maxCoreV = 2800;
+
+// Depth buckets for ordering hair without allocating.
+const int _sortBuckets = 256;
+
+// Per-row hair values for root, middle and tip. They never change, so they
+// are worked out once here, not per strand per frame.
+const List<double> _rowOccl = <double>[0.25, 0.7117, 1.0];
+const List<double> _rowMix = <double>[0.0, 1.0, 1.0];
 
 /// A furry ball peeled into one spiral ribbon, wound about two and a half
 /// times round a glowing pebbled core. It turns on its axis, so the almond
@@ -340,6 +347,9 @@ class _PlushState extends State<Plush> {
   _Fur? _fur;
   String _furKey = '';
   final Int32List _cand = Int32List(_maxStrands);
+  final Int32List _candB = Int32List(_maxStrands);
+  final Int32List _order = Int32List(_maxStrands);
+  final Int32List _bucket = Int32List(_sortBuckets + 1);
   final Float64List _candZ = Float64List(_maxStrands);
   final Float32List _fPos = Float32List(_maxStrands * 10);
   final Int32List _fCol = Int32List(_maxStrands * 5);
@@ -586,9 +596,10 @@ class _PlushState extends State<Plush> {
     final ribbon = _pEff > 0.004;
 
     final (segs, rows, cuN, cvN, furK) = switch (w.quality) {
-      EffectQuality.low => (120, 6, 36, 18, 0.4),
-      EffectQuality.medium => (180, 8, 54, 27, 0.65),
-      EffectQuality.high => (240, 10, 72, 36, 1.0),
+      EffectQuality.low => (72, 5, 24, 12, 0.18),
+      EffectQuality.medium => (110, 6, 36, 18, 0.35),
+      EffectQuality.high => (160, 8, 48, 24, 0.6),
+
     };
     _ensureShell(g, segs, rows, cuN, cvN);
 
@@ -850,8 +861,25 @@ class _PlushState extends State<Plush> {
       n++;
     }
     if (n == 0) return;
-    final order = List<int>.generate(n, (i) => i);
-    order.sort((a, b) => _candZ[a].compareTo(_candZ[b]));
+    // Back to front by depth, using a counting sort: no allocation.
+    final bucket = _bucket;
+    bucket.fillRange(0, _sortBuckets + 1, 0);
+    for (var q = 0; q < n; q++) {
+      var bk = ((_candZ[q] + 1.6) * (_sortBuckets / 3.2)).toInt();
+      if (bk < 0) {
+        bk = 0;
+      } else if (bk > _sortBuckets - 1) {
+        bk = _sortBuckets - 1;
+      }
+      _candB[q] = bk;
+      bucket[bk + 1]++;
+    }
+    for (var b = 0; b < _sortBuckets; b++) {
+      bucket[b + 1] += bucket[b];
+    }
+    for (var q = 0; q < n; q++) {
+      _order[bucket[_candB[q]]++] = q;
+    }
 
     final w1 = _widthPx;
     final half0 = math.max(w1, 1.0) * 0.5;
@@ -859,7 +887,7 @@ class _PlushState extends State<Plush> {
     var vb = 0;
     var ib = 0;
     for (var q = 0; q < n; q++) {
-      final i = _cand[order[q]];
+      final i = _cand[_order[q]];
       final o = i * _furStride;
       final r0x = d[o];
       final r0y = d[o + 1];
@@ -918,9 +946,11 @@ class _PlushState extends State<Plush> {
       hy /= hl;
       hz /= hl;
       final th2 = tx * hx + ty * hy + tz * hz;
-      final ks = math
-          .pow(math.sqrt(math.max(1 - th2 * th2, 0.0)), _shine)
-          .toDouble();
+      final kq = math.max(1 - th2 * th2, 0.0);
+      final kq2 = kq * kq;
+      final kq4 = kq2 * kq2;
+      final kq8 = kq4 * kq4;
+      final ks = kq8 * kq4 * kq2 * kq; // kq^15, same as sqrt(kq)^30
       final graze = 1 - (nx * ex + ny * ey + nz * ez).abs();
       final semK = 1 + _semEdge * graze * graze;
       final lit = _ambient + (1 - _ambient) * kd * shade;
@@ -928,8 +958,8 @@ class _PlushState extends State<Plush> {
       // Three rows up the hair: root, middle, tip.
       for (var r = 0; r < 3; r++) {
         final s = r * 0.5;
-        final occl = 0.25 + 0.75 * math.pow(s, 0.7).toDouble();
-        final mixB = _smooth(0, 0.5, s);
+        final occl = _rowOccl[r];
+        final mixB = _rowMix[r];
         final body = 0.55 + 0.9 * bright;
         var cr = (_rootR + (_furR - _rootR) * mixB) * body * lit * occl;
         var cg = (_rootG + (_furG - _rootG) * mixB) * body * lit * occl;
