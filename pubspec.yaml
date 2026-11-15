@@ -47,3 +47,5 @@ flutter:
     - shaders/pisces.frag
     - shaders/mito.frag
     - shaders/meteor_rock.frag
+    - shaders/crossfold.frag
+    - shaders/gaze.frag

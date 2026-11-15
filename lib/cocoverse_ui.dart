@@ -30,3 +30,6 @@ export 'src/effects/mito/mito.dart';
 export 'src/effects/moonbloom/moonbloom.dart';
 export 'src/effects/fireworks/fireworks.dart';
 export 'src/effects/meteor/meteor.dart';
+export 'src/effects/infiloop/infiloop.dart';
+export 'src/effects/crossfold/crossfold.dart';
+export 'src/effects/gaze/gaze.dart';

@@ -1,6 +1,10 @@
 {{flutter_js}}
 {{flutter_build_config}}
 
+
+
+
+
 // The website runs one Flutter engine and gives every phone its own view.
 _flutter.loader.load({
   config: {
@@ -21,6 +25,5 @@ _flutter.loader.load({
 });
 
 
-
 // --- STANDARD DEFAULT LOADER FOR LOCAL PREVIEW ---
-_flutter.loader.load({});
+//_flutter.loader.load({});

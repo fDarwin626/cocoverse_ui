@@ -216,11 +216,11 @@ vec4 seamBand(vec2 p, float px) {
 
   // Lines a constant number of pixels wide: bright where the faces meet, and
   // a dark refracted line beside each.
-  float w = max(1.3 * ds, 0.07);
+  float w = max(0.8 * ds, 0.035);
   float lines = 0.0;
-  lines += 1.00 * ss(max(1.8 * ds, 0.14), 0.0, abs(s - 0.90));
-  lines += 0.70 * ss(w, 0.0, abs(s - 0.50));
-  lines += 0.85 * ss(w, 0.0, abs(s - 0.08));
+  lines += 0.85 * ss(max(1.0 * ds, 0.07), 0.0, abs(s - 0.90));
+  lines += 0.55 * ss(w, 0.0, abs(s - 0.50));
+  lines += 0.65 * ss(w, 0.0, abs(s - 0.08));
   float dark = 0.0;
   dark += ss(w * 1.3, 0.0, abs(s - 0.70));
   dark += ss(w * 1.1, 0.0, abs(s - 0.29));
@@ -347,14 +347,17 @@ void main() {
   if (sb.x > 0.0 && sb.z > ballZ) {
     float hidden = sb.z < 0.0 ? fm * 0.85 : 0.0;
     float a = sb.x * (1.0 - hidden);
-    vec3 under = alpha > 0.02 ? light / alpha : vec3(0.0);
-    // The lip is the cut face of the glass: pale and solid, milky where it is
-    // the frosted half's.
-    vec3 lipCol = under * 0.62 + vec3(0.12, 0.125, 0.15) * (0.6 + 0.6 * frostAmt);
-    lipCol = mix(lipCol, lipCol * 0.35, sb.w * 0.8);
-    lipCol = mix(lipCol, vec3(1.5, 1.55, 1.6), sb.y);
-    light = mix(light, lipCol * 0.92, a);
-    alpha = mix(alpha, 0.92, a);
+    // The lip is clear glass. It keeps what is behind it, with a faint grey
+    // haze, and only thin lines show.
+    float aHaze = a * 0.30;
+    light = light * (1.0 - aHaze) + vec3(0.050, 0.052, 0.058) * aHaze;
+    alpha = alpha + aHaze * (1.0 - alpha);
+    // The dark refracted lines beside the edges.
+    light *= 1.0 - sb.w * 0.45 * a;
+    // The thin edge lines: bright, but never pure white.
+    float aLine = sb.y * a * 0.70;
+    light = light * (1.0 - aLine) + vec3(0.70, 0.72, 0.75) * aLine;
+    alpha = alpha + aLine * (1.0 - alpha);
   }
 
   // Tone map and encode, then premultiply.
@@ -364,8 +367,10 @@ void main() {
   float capsuleAlpha = alpha * cover;
   vec3 capsulePremult = shown * capsuleAlpha;
 
-  // The bloom sits behind the capsule.
-  float outAlpha = capsuleAlpha + haloAlpha * (1.0 - capsuleAlpha);
-  vec3 outPremult = capsulePremult + haloShown * (1.0 - capsuleAlpha);
+  // The bloom sits behind the capsule, and only outside its silhouette.
+  // Inside, it would show through the clear glass as a grey wash.
+  float haloK = 1.0 - cover;
+  float outAlpha = capsuleAlpha + haloAlpha * haloK * (1.0 - capsuleAlpha);
+  vec3 outPremult = capsulePremult + haloShown * haloK * (1.0 - capsuleAlpha);
   fragColor = vec4(outPremult, outAlpha);
 }

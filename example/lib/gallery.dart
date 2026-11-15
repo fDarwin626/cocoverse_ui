@@ -1,12 +1,36 @@
 import 'package:cocoverse_ui/cocoverse_ui.dart';
 import 'package:flutter/material.dart';
+import 'gaze_onboarding.dart';
 
+enum _Demo {
+  glossy,
+  starfield,
+  glass,
+  cube,
+  cluster,
+  clayBot,
+  jelly,
+  timeline,
+  halo,
+  hourglass,
+  plush,
+  mito,
+  moonbloom,
+  urchin,
+  foil,
+  geo,
+  blossom,
+  cubeSphere,
+  capsule,
+  linkChain,
+  pisces,
+  fireworks,
+  meteor,
+  infiloop,
+  crossfold,
+  gaze,
+}
 
-
-enum _Demo { glossy, starfield, glass, cube, cluster, clayBot,
- jelly,timeline,halo,hourglass,plush,mito,moonbloom,
-urchin, foil, geo, blossom, cubeSphere, capsule, linkChain,pisces,
-fireworks, meteor,} 
 /// Shows one effect at a time, with a few colour choices.
 class Gallery extends StatefulWidget {
   /// Creates the gallery.
@@ -18,53 +42,88 @@ class Gallery extends StatefulWidget {
 
 class _GalleryState extends State<Gallery> {
   static const List<List<Color>> _palettes = <List<Color>>[
-    <Color>[Color.fromARGB(23, 17, 0, 255), Color.fromARGB(255, 138, 3, 131), Color.fromARGB(255, 253, 252, 252)],
-    <Color> [Color.fromARGB(255, 241, 77, 187), Color.fromARGB(255, 203, 71, 255), Color.fromARGB(255, 179, 168, 226)],
+    <Color>[
+      Color.fromARGB(23, 17, 0, 255),
+      Color.fromARGB(255, 138, 3, 131),
+      Color.fromARGB(255, 253, 252, 252),
+    ],
+    <Color>[
+      Color.fromARGB(255, 241, 77, 187),
+      Color.fromARGB(255, 203, 71, 255),
+      Color.fromARGB(255, 179, 168, 226),
+    ],
     <Color>[Color(0xFF1E8E6A), Color(0xFF34D1BF), Color(0xFF63B7F0)],
   ];
 
   _Demo _demo = _Demo.glass;
-int _palette = 0;
-final CharacterController _sprite = CharacterController();
-final ClayBotController _bot = ClayBotController();
-final MitoController _mito = MitoController();
-PiscesVariant _fish = PiscesVariant.oranda;
-PiscesMode _fishMode = PiscesMode.idle;
-bool _fishActive = false;
-final PiscesController _fishCtl = PiscesController();
-HaloFinish _haloFinish = HaloFinish.metallic;
-double? _haloProgress;
-bool _haloCenter = false;
-double _hgFocus = 100;
-bool _hgCustom = false;
-HourglassMotion _hgMotion = HourglassMotion.flowUp;
-double? _plushProgress;
-double _plushSpeed = 50;
-bool _plushChild = false;
-int _plushColour = 0;
-MoonbloomSide _mbSide = MoonbloomSide.left;
-double _mbBlur = 0;
-double _mbDim = 0;
-final EffectController _fwCtl = EffectController();
-FireworksTextAnimation _fwAnim = FireworksTextAnimation.blur;
-bool _fwText = true;
-final EffectController _mtCtl = EffectController();
-MeteorShape _mtShape = MeteorShape.plus;
-int _mtColour = 0;
-bool _mtDrag = true;
-bool _mtPush = true;
-bool _mtPaused = false;
+  int _palette = 0;
+  final CharacterController _sprite = CharacterController();
+  final ClayBotController _bot = ClayBotController();
+  final MitoController _mito = MitoController();
+  PiscesVariant _fish = PiscesVariant.oranda;
+  PiscesMode _fishMode = PiscesMode.idle;
+  bool _fishActive = false;
+  final PiscesController _fishCtl = PiscesController();
+  HaloFinish _haloFinish = HaloFinish.metallic;
+  double? _haloProgress;
+  bool _haloCenter = false;
+  double _hgFocus = 100;
+  bool _hgCustom = false;
+  HourglassMotion _hgMotion = HourglassMotion.flowUp;
+  double? _plushProgress;
+  double _plushSpeed = 50;
+  bool _plushChild = false;
+  int _plushColour = 0;
+  MoonbloomSide _mbSide = MoonbloomSide.left;
+  double _mbBlur = 0;
+  double _mbDim = 0;
+  final EffectController _fwCtl = EffectController();
+  FireworksTextAnimation _fwAnim = FireworksTextAnimation.blur;
+  bool _fwText = true;
+  final EffectController _mtCtl = EffectController();
+  MeteorShape _mtShape = MeteorShape.plus;
+  int _mtColour = 0;
+  bool _mtDrag = true;
+  bool _mtPush = true;
+  bool _mtPaused = false;
+  final EffectController _ilCtl = EffectController();
+  int _ilPalette = 0;
+  double? _ilProgress;
+  double _ilAngle = 0;
+  bool _ilReverse = false;
+  bool _ilCenter = false;
+  final EffectController _cfCtl = EffectController();
+  CrossfoldFinish _cfFinish = CrossfoldFinish.metallic;
+  int _cfColour = 0;
+double? _cfProgress;
+final GazeController _gzCtl = GazeController();
+int _gzColour = 0;
+int _gzPupil = 0;
+bool _gzFollow = true;
+bool _gzLock = false;
+static const List<Color> _gzIris = <Color>[
+  Color(0xFFFF2400),
+  Color(0xFF2E9E5B),
+  Color(0xFF3B82F6),
+  Color(0xFFB8860B),
+];
+  static const List<List<Color>> _ilPalettes = <List<Color>>[
+    <Color>[Color(0xFF632EFF), Color(0xFFE070FF), Color(0xFF3A6BFF)],
+    <Color>[Color(0xFFFF8A00), Color(0xFFFFD60A), Color(0xFFFF3D00)],
+    <Color>[Color(0xFF14B8A6), Color(0xFF5EEAD4), Color(0xFF38BDF8)],
+    <Color>[Color(0xFFE11D48), Color(0xFFFF7AA2), Color(0xFFF97316)],
+  ];
 
-    static const List<List<_Demo>> _pages = <List<_Demo>>[
+  static const List<List<_Demo>> _pages = <List<_Demo>>[
     <_Demo>[_Demo.glossy, _Demo.starfield, _Demo.glass],
     <_Demo>[_Demo.cube, _Demo.cluster, _Demo.jelly],
-    <_Demo>[ _Demo.urchin, _Demo.foil, _Demo.pisces],
+    <_Demo>[_Demo.urchin, _Demo.foil, _Demo.pisces],
     <_Demo>[_Demo.cubeSphere, _Demo.blossom, _Demo.geo],
     <_Demo>[_Demo.capsule, _Demo.clayBot, _Demo.linkChain],
     <_Demo>[_Demo.timeline, _Demo.halo, _Demo.hourglass],
     <_Demo>[_Demo.plush, _Demo.mito, _Demo.moonbloom],
-    <_Demo>[ _Demo.fireworks,_Demo.meteor],
-
+    <_Demo>[_Demo.fireworks, _Demo.meteor, _Demo.infiloop],
+    <_Demo>[_Demo.crossfold, _Demo.gaze],
   ];
 
   static const Map<_Demo, String> _labels = <_Demo, String>{
@@ -76,21 +135,24 @@ bool _mtPaused = false;
     _Demo.jelly: 'Jelly',
     _Demo.urchin: 'Urchin',
     _Demo.foil: 'Foil ring',
-    _Demo.geo:'GeoMorph',
+    _Demo.geo: 'GeoMorph',
     _Demo.blossom: 'Blossom',
-   _Demo.cubeSphere: 'Cube sphere',
-   _Demo.capsule: 'Capsule sprite',
-   _Demo.clayBot: 'Clay bot',
-   _Demo.linkChain: 'Link chain',
-   _Demo.pisces: 'Pisces',
-   _Demo.timeline: 'Timeline',
-   _Demo.halo: 'Halo',
-   _Demo.hourglass: 'Hourglass',
-   _Demo.plush: "Plush",
-   _Demo.mito: "Mito",
-   _Demo.moonbloom: "Moonbloom",
-   _Demo.fireworks: "Fireworks",
-   _Demo.meteor:" Meteor",
+    _Demo.cubeSphere: 'Cube sphere',
+    _Demo.capsule: 'Capsule sprite',
+    _Demo.clayBot: 'Clay bot',
+    _Demo.linkChain: 'Link chain',
+    _Demo.pisces: 'Pisces',
+    _Demo.timeline: 'Timeline',
+    _Demo.halo: 'Halo',
+    _Demo.hourglass: 'Hourglass',
+    _Demo.gaze: "Gaze",
+    _Demo.plush: "Plush",
+    _Demo.mito: "Mito",
+    _Demo.moonbloom: "Moonbloom",
+    _Demo.fireworks: "Fireworks",
+    _Demo.meteor: " Meteor",
+    _Demo.infiloop: "Infiloop",
+    _Demo.crossfold: "Crossfold",
   };
 
   int _page = 0;
@@ -102,22 +164,30 @@ bool _mtPaused = false;
     });
   }
 
-
-
   Widget _demoFor(List<Color> colors) {
     return switch (_demo) {
-         _Demo.cube =>
-        ParticleCube(colors: colors, semanticLabel: 'Particle cube'),
-      _Demo.cluster =>
-        ShardSphere(colors: colors, semanticLabel: 'Shard sphere'),
-        _Demo.mito => Mito(controller: _mito, semanticLabel: 'Mito sphere'),
-        _Demo.linkChain => LinkChain(finish:LinkChainFinish.metallic,metalColor:Color.fromARGB(255, 250, 208, 110), semanticLabel: 'Link chain'),
-      _Demo.jelly =>
-        JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
-      _Demo.clayBot => ClayBot(controller: _bot, walkSpeed: 3.5, 
-      entrance: ClayBotEntrance.dropIn,
-      semanticLabel: 'Clay bot'),
-        _Demo.timeline => Padding(
+      _Demo.cube => ParticleCube(
+        colors: colors,
+        semanticLabel: 'Particle cube',
+      ),
+      _Demo.cluster => ShardSphere(
+        colors: colors,
+        semanticLabel: 'Shard sphere',
+      ),
+      _Demo.mito => Mito(controller: _mito, semanticLabel: 'Mito sphere'),
+      _Demo.linkChain => LinkChain(
+        finish: LinkChainFinish.metallic,
+        metalColor: Color.fromARGB(255, 250, 208, 110),
+        semanticLabel: 'Link chain',
+      ),
+      _Demo.jelly => JellySphere(colors: colors, semanticLabel: 'Jelly sphere'),
+      _Demo.clayBot => ClayBot(
+        controller: _bot,
+        walkSpeed: 3.5,
+        entrance: ClayBotEntrance.dropIn,
+        semanticLabel: 'Clay bot',
+      ),
+      _Demo.timeline => Padding(
         padding: const EdgeInsets.all(24),
         child: Center(
           child: AspectRatio(
@@ -133,12 +203,11 @@ bool _mtPaused = false;
                 ],
                 semanticLabel: 'Timeline',
               ),
-
             ),
           ),
         ),
       ),
-_Demo.plush => Plush(
+      _Demo.plush => Plush(
         background: const Color(0xFF000000),
         fur: const [
           Color(0xFF0074FF),
@@ -162,7 +231,64 @@ _Demo.plush => Plush(
               )
             : null,
       ),
-    _Demo.meteor => ColoredBox(
+
+    _Demo.gaze => ColoredBox(
+        color: const Color(0xFF111111),
+        child: Center(
+          child: SizedBox(
+            width: 320,
+            height: 320,
+            child: Gaze(
+              controller: _gzCtl,
+              irisColor: _gzIris[_gzColour],
+              pupilSize: _gzPupil.toDouble(),
+              follow: _gzFollow ? GazeFollow.screen : GazeFollow.off,
+              semanticLabel: 'Gaze',
+            ),
+          ),
+        ),
+      ),
+      _Demo.crossfold => ColoredBox(
+        color: const Color(0xFF000000),
+        child: Crossfold(
+          controller: _cfCtl,
+          color: const [
+            Color(0xFFB2B2B2),
+            Color(0xFFD4AF37),
+            Color(0xFFB87333),
+            Color(0xFF3B82F6),
+          ][_cfColour],
+          finish: _cfFinish,
+          progress: _cfProgress,
+          semanticLabel: 'Crossfold',
+        ),
+      ),
+      _Demo.infiloop => ColoredBox(
+        color: const Color(0xFF000000),
+        child: Infiloop(
+          controller: _ilCtl,
+          baseColor: _ilPalettes[_ilPalette][0],
+          lightA: _ilPalettes[_ilPalette][1],
+          lightB: _ilPalettes[_ilPalette][2],
+          angle: _ilAngle,
+          reverse: _ilReverse,
+          progress: _ilProgress,
+          semanticLabel: 'Infiloop',
+          child: _ilCenter
+              ? Text(
+                  _ilProgress == null
+                      ? '...'
+                      : '${(_ilProgress! * 100).round()}%',
+                  style: const TextStyle(
+                    color: Color(0xFFFFFFFF),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                  ),
+                )
+              : null,
+        ),
+      ),
+      _Demo.meteor => ColoredBox(
         color: const Color(0xFF0B0B0F),
         child: Meteor(
           controller: _mtCtl,
@@ -198,7 +324,6 @@ _Demo.plush => Plush(
         semanticLabel: 'Moonbloom',
       ),
       _Demo.hourglass => Hourglass(
-
         focus: _hgFocus,
         colors: _hgCustom
             ? const [
@@ -234,36 +359,51 @@ _Demo.plush => Plush(
         ),
       ),
       _Demo.pisces => Pisces(
-          variant: _fish,
-          mode: _fishMode,
-          active: _fishActive,
-          controller: _fishCtl,
-          semanticLabel: 'Pisces',
-        ),
-      _Demo.capsule => CapsuleSprite(controller: _sprite, semanticLabel: 'Capsule sprite'),
-        _Demo.urchin => Urchin( quality: EffectQuality.high, semanticLabel: 'Urchin'),
-        // _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
-            _Demo.foil => FoilRing(colors: colors, semanticLabel: 'Foil ring'),
+        variant: _fish,
+        mode: _fishMode,
+        active: _fishActive,
+        controller: _fishCtl,
+        semanticLabel: 'Pisces',
+      ),
+      _Demo.capsule => CapsuleSprite(
+        controller: _sprite,
+        semanticLabel: 'Capsule sprite',
+      ),
+      _Demo.urchin => Urchin(
+        quality: EffectQuality.high,
+        semanticLabel: 'Urchin',
+      ),
+      // _Demo.urchin => Urchin(colors: colors, semanticLabel: 'Urchin'),
+      _Demo.foil => FoilRing(colors: colors, semanticLabel: 'Foil ring'),
       _Demo.geo => GeoMorph(
-          color: colors[0],
-          shapeColors: {
-            GeoShape.sphere: colors[1],
-            GeoShape.octahedron: colors[2],
-            GeoShape.torus: colors[1],
-          },
-          semanticLabel: 'GeoMorph',
-        ),
-      _Demo.blossom => Blossom(spin: 0, float: 0, tilt: 0, semanticLabel: 'Blossom'),
-        _Demo.cubeSphere => CubeSphere(semanticLabel: 'Cube sphere'),
-      _Demo.glossy =>
-        GlossySphere(colors: colors, semanticLabel: 'Glossy sphere'),
-      _Demo.starfield =>
-        StarfieldSphere(colors: colors, semanticLabel: 'Starfield sphere'),
+        color: colors[0],
+        shapeColors: {
+          GeoShape.sphere: colors[1],
+          GeoShape.octahedron: colors[2],
+          GeoShape.torus: colors[1],
+        },
+        semanticLabel: 'GeoMorph',
+      ),
+      _Demo.blossom => Blossom(
+        spin: 0,
+        float: 0,
+        tilt: 0,
+        semanticLabel: 'Blossom',
+      ),
+      _Demo.cubeSphere => CubeSphere(semanticLabel: 'Cube sphere'),
+      _Demo.glossy => GlossySphere(
+        colors: colors,
+        semanticLabel: 'Glossy sphere',
+      ),
+      _Demo.starfield => StarfieldSphere(
+        colors: colors,
+        semanticLabel: 'Starfield sphere',
+      ),
       _Demo.glass => GlassRing(
-          tint: Color.lerp(colors[1], const Color(0xFFFFFFFF), 0.5)!,
-          backdropText: 'COCO\nVERSE',
-          semanticLabel: 'Glass ring',
-        ),
+        tint: Color.lerp(colors[1], const Color(0xFFFFFFFF), 0.5)!,
+        backdropText: 'COCO\nVERSE',
+        semanticLabel: 'Glass ring',
+      ),
     };
   }
 
@@ -286,7 +426,7 @@ _Demo.plush => Plush(
                   setState(() => _demo = selection.first),
             ),
           ),
-                    Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
@@ -306,319 +446,7 @@ _Demo.plush => Plush(
             child: Stack(
               children: [
                 Positioned.fill(child: _demoFor(colors)),
-              if (_demo == _Demo.clayBot)
-                Positioned(
-                  bottom: 8,
-                  left: 0,
-                  right: 0,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(onPressed: _bot.blink, child: const Text('Blink')),
-                      OutlinedButton(onPressed: _bot.shake, child: const Text('Shake')),
-                      OutlinedButton(onPressed: _bot.nod, child: const Text('Nod')),
-                      OutlinedButton(onPressed: _bot.bounce, child: const Text('Hop')),
-                      OutlinedButton(onPressed: _bot.wave, child: const Text('Wave')),
-                      OutlinedButton(onPressed: () => _bot.walkOff(ClayBotSide.right), child: const Text('Walk off')),
-                      OutlinedButton(onPressed: () => _bot.walkIn(ClayBotSide.left), child: const Text('Walk in')),
-                    ],
-                  ),
-                ),
-
-                      if (_demo == _Demo.mito)
-                    Positioned(
-                      bottom: 8,
-                      left: 0,
-                      right: 0,
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 8,
-                        children: [
-                          OutlinedButton(onPressed: _mito.blink, child: const Text('Blink')),
-                          OutlinedButton(onPressed: _mito.shake, child: const Text('Shake')),
-                          OutlinedButton(onPressed: _mito.nod, child: const Text('Nod')),
-                          OutlinedButton(onPressed: _mito.bounce, child: const Text('Hop')),
-                          OutlinedButton(onPressed: _mito.wave, child: const Text('Wave')),
-                          OutlinedButton(onPressed: () => _mito.flyOff(MitoSide.right), child: const Text('Fly off')),
-                          OutlinedButton(onPressed: () => _mito.flyIn(MitoSide.left), child: const Text('Fly in')),
-                        ],
-                      ),
-                    ),
-              if (_demo == _Demo.pisces)
-                Positioned(
-                  bottom: 8,
-                  left: 0,
-                  right: 0,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () =>
-                            setState(() => _fish = PiscesVariant.oranda),
-                        child: const Text('Oranda'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () =>
-                            setState(() => _fish = PiscesVariant.redCap),
-
-                        child: const Text('Red cap'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          _fishMode = _fishMode == PiscesMode.idle
-                              ? PiscesMode.visit
-                              : PiscesMode.idle;
-                        }),
-                        child: Text(
-                            'Mode: ${_fishMode == PiscesMode.idle ? 'idle' : 'visit'}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () =>
-                            setState(() => _fishActive = !_fishActive),
-                        child: Text('Active: $_fishActive'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => _fishCtl.swim(
-                            from: PiscesSide.top, to: PiscesSide.bottom),
-                        child: const Text('Swim down'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => _fishCtl.swim(
-                            from: PiscesSide.left, to: PiscesSide.right),
-                        child: const Text('Swim across'),
-                      ),
-                      OutlinedButton(
-                        onPressed: _fishCtl.kill,
-                        child: const Text('Catch'),
-                      ),
-                      OutlinedButton(
-                        onPressed: _fishCtl.rest,
-                        child: const Text('Rest'),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_demo == _Demo.plush)
-                Positioned(
-                  bottom: 8,
-                  left: 0,
-                  right: 0,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          final p = _plushProgress;
-                          _plushProgress =
-                              p == null ? 0 : (p >= 1 ? null : p + 0.25);
-                        }),
-                        child: Text(
-                          _plushProgress == null
-                              ? 'Progress: off'
-                              : 'Progress: ${(_plushProgress! * 100).round()}%',
-                        ),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          _plushSpeed = _plushSpeed == 50
-                              ? 100
-                              : (_plushSpeed == 100 ? 12 : (_plushSpeed == 12 ? 0 : 50));
-                        }),
-                        child: Text('Speed: ${_plushSpeed.round()}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () =>
-                            setState(() => _plushColour = (_plushColour + 1) % 4),
-                        child: const Text('Fur colour'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () =>
-                            setState(() => _plushChild = !_plushChild),
-                        child: Text('Centre: ${_plushChild ? 'on' : 'off'}'),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_demo == _Demo.meteor)
-                Positioned(
-                  bottom: 8,
-                  left: 0,
-                  right: 0,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: _mtCtl.reset,
-                        child: const Text('Replay'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          final all = MeteorShape.values;
-                          _mtShape = all[(_mtShape.index + 1) % all.length];
-                        }),
-                        child: Text('Shape: ${_mtShape.name}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () =>
-                            setState(() => _mtColour = (_mtColour + 1) % 4),
-                        child: const Text('Colour'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() => _mtDrag = !_mtDrag),
-                        child: Text('Drag: ${_mtDrag ? 'on' : 'off'}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() => _mtPush = !_mtPush),
-                        child: Text('Push: ${_mtPush ? 'on' : 'off'}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() => _mtPaused = !_mtPaused),
-                        child: Text('Paused: $_mtPaused'),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_demo == _Demo.fireworks)
-                Positioned(
-                  bottom: 8,
-                  left: 0,
-                  right: 0,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: _fwCtl.reset,
-                        child: const Text('Replay'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () {
-                          setState(() => _fwText = !_fwText);
-                          _fwCtl.reset();
-                        },
-                        child: Text('Text: ${_fwText ? 'on' : 'off'}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () {
-                          setState(() {
-                            final all = FireworksTextAnimation.values;
-                            _fwAnim = all[(_fwAnim.index + 1) % all.length];
-                          });
-                          _fwCtl.reset();
-                        },
-                        child: Text('Animation: ${_fwAnim.name}'),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_demo == _Demo.moonbloom)
-                Positioned(
-                  bottom: 8,
-                  left: 0,
-                  right: 0,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          _mbSide = _mbSide == MoonbloomSide.left
-                              ? MoonbloomSide.right
-                              : MoonbloomSide.left;
-                        }),
-                        child: Text('Side: ${_mbSide.name}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          _mbBlur = _mbBlur == 0
-                              ? 35
-                              : (_mbBlur == 35 ? 60 : (_mbBlur == 60 ? 100 : 0));
-                        }),
-                        child: Text('Blur: ${_mbBlur.round()}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          _mbDim = _mbDim == 0 ? 30 : (_mbDim == 30 ? 60 : 0);
-                        }),
-                        child: Text('Dim: ${_mbDim.round()}'),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_demo == _Demo.hourglass)
-                Positioned(
-                  bottom: 8,
-                  left: 0,
-                  right: 0,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          _hgFocus = _hgFocus > 80
-                              ? 60
-                              : (_hgFocus > 45 ? 30 : (_hgFocus > 15 ? 8 : 100));
-                        }),
-                        child: Text('Focus: ${_hgFocus.round()}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() => _hgCustom = !_hgCustom),
-                        child: Text('Colours: ${_hgCustom ? 'custom' : 'original'}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          final all = HourglassMotion.values;
-                          _hgMotion = all[(_hgMotion.index + 1) % all.length];
-                        }),
-                        child: Text('Motion: ${_hgMotion.name}'),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_demo == _Demo.halo)
-                Positioned(
-                  bottom: 8,
-                  left: 0,
-                  right: 0,
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 8,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          _haloFinish = _haloFinish == HaloFinish.metallic
-                              ? HaloFinish.cartoon
-                              : HaloFinish.metallic;
-                        }),
-                        child: Text('Finish: ${_haloFinish.name}'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => setState(() {
-                          final p = _haloProgress;
-                          _haloProgress =
-                              p == null ? 0 : (p >= 1 ? null : p + 0.25);
-                        }),
-                        child: Text(
-                          _haloProgress == null
-                              ? 'Progress: off'
-                              : 'Progress: ${(_haloProgress! * 100).round()}%',
-                        ),
-                      ),
-                      OutlinedButton(
-                        onPressed: () =>
-                            setState(() => _haloCenter = !_haloCenter),
-                        child: Text('Centre: ${_haloCenter ? 'on' : 'off'}'),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_demo == _Demo.capsule)
-
+                if (_demo == _Demo.clayBot)
                   Positioned(
                     bottom: 8,
                     left: 0,
@@ -627,10 +455,537 @@ _Demo.plush => Plush(
                       alignment: WrapAlignment.center,
                       spacing: 8,
                       children: [
-                        OutlinedButton(onPressed: _sprite.blink, child: const Text('Blink')),
-                        OutlinedButton(onPressed: _sprite.shake, child: const Text('Shake')),
-                        OutlinedButton(onPressed: _sprite.nod, child: const Text('Nod')),
-                        OutlinedButton(onPressed: _sprite.bounce, child: const Text('Bounce')),
+                        OutlinedButton(
+                          onPressed: _bot.blink,
+                          child: const Text('Blink'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _bot.shake,
+                          child: const Text('Shake'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _bot.nod,
+                          child: const Text('Nod'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _bot.bounce,
+                          child: const Text('Hop'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _bot.wave,
+                          child: const Text('Wave'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => _bot.walkOff(ClayBotSide.right),
+                          child: const Text('Walk off'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => _bot.walkIn(ClayBotSide.left),
+                          child: const Text('Walk in'),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                if (_demo == _Demo.mito)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: _mito.blink,
+                          child: const Text('Blink'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _mito.shake,
+                          child: const Text('Shake'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _mito.nod,
+                          child: const Text('Nod'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _mito.bounce,
+                          child: const Text('Hop'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _mito.wave,
+                          child: const Text('Wave'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => _mito.flyOff(MitoSide.right),
+                          child: const Text('Fly off'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => _mito.flyIn(MitoSide.left),
+                          child: const Text('Fly in'),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.pisces)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _fish = PiscesVariant.oranda),
+                          child: const Text('Oranda'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _fish = PiscesVariant.redCap),
+
+                          child: const Text('Red cap'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            _fishMode = _fishMode == PiscesMode.idle
+                                ? PiscesMode.visit
+                                : PiscesMode.idle;
+                          }),
+                          child: Text(
+                            'Mode: ${_fishMode == PiscesMode.idle ? 'idle' : 'visit'}',
+                          ),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _fishActive = !_fishActive),
+                          child: Text('Active: $_fishActive'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => _fishCtl.swim(
+                            from: PiscesSide.top,
+                            to: PiscesSide.bottom,
+                          ),
+                          child: const Text('Swim down'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => _fishCtl.swim(
+                            from: PiscesSide.left,
+                            to: PiscesSide.right,
+                          ),
+                          child: const Text('Swim across'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _fishCtl.kill,
+                          child: const Text('Catch'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _fishCtl.rest,
+                          child: const Text('Rest'),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.plush)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            final p = _plushProgress;
+                            _plushProgress = p == null
+                                ? 0
+                                : (p >= 1 ? null : p + 0.25);
+                          }),
+                          child: Text(
+                            _plushProgress == null
+                                ? 'Progress: off'
+                                : 'Progress: ${(_plushProgress! * 100).round()}%',
+                          ),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            _plushSpeed = _plushSpeed == 50
+                                ? 100
+                                : (_plushSpeed == 100
+                                      ? 12
+                                      : (_plushSpeed == 12 ? 0 : 50));
+                          }),
+                          child: Text('Speed: ${_plushSpeed.round()}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(
+                            () => _plushColour = (_plushColour + 1) % 4,
+                          ),
+                          child: const Text('Fur colour'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _plushChild = !_plushChild),
+                          child: Text('Centre: ${_plushChild ? 'on' : 'off'}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.meteor)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: _mtCtl.reset,
+                          child: const Text('Replay'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            final all = MeteorShape.values;
+                            _mtShape = all[(_mtShape.index + 1) % all.length];
+                          }),
+                          child: Text('Shape: ${_mtShape.name}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _mtColour = (_mtColour + 1) % 4),
+                          child: const Text('Colour'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() => _mtDrag = !_mtDrag),
+                          child: Text('Drag: ${_mtDrag ? 'on' : 'off'}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() => _mtPush = !_mtPush),
+                          child: Text('Push: ${_mtPush ? 'on' : 'off'}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _mtPaused = !_mtPaused),
+                          child: Text('Paused: $_mtPaused'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_demo == _Demo.gaze)
+                Positioned(
+                  bottom: 8,
+                  left: 0,
+                  right: 0,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      FilledButton(
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const GazeOnboarding(),
+                          ),
+                        ),
+                        child: const Text('Use case'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => setState(
+                          () => _gzColour = (_gzColour + 1) % _gzIris.length,
+                        ),
+                        child: const Text('Iris colour'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _gzPupil = (_gzPupil + 3) % 12),
+                        child: Text('Pupil: $_gzPupil'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _gzFollow = !_gzFollow),
+                        child: Text('Follow: ${_gzFollow ? 'on' : 'off'}'),
+                      ),
+                      OutlinedButton(
+                        onPressed: _gzCtl.startle,
+                        child: const Text('Startle'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() => _gzLock = !_gzLock);
+                          if (_gzLock) {
+                            _gzCtl.lookAt(const Offset(40, 160));
+                          } else {
+                            _gzCtl.release();
+                          }
+                        },
+                        child: Text('Lock gaze: ${_gzLock ? 'on' : 'off'}'),
+                      ),
+                    ],
+                  ),
+                ),
+              if (_demo == _Demo.crossfold)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: _cfCtl.reset,
+                          child: const Text('Replay'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            _cfFinish = _cfFinish == CrossfoldFinish.metallic
+                                ? CrossfoldFinish.matte
+                                : CrossfoldFinish.metallic;
+                          }),
+                          child: Text('Finish: ${_cfFinish.name}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _cfColour = (_cfColour + 1) % 4),
+                          child: const Text('Colour'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            final p = _cfProgress;
+                            _cfProgress = p == null
+                                ? 0
+                                : (p >= 1 ? null : p + 0.25);
+                          }),
+                          child: Text(
+                            _cfProgress == null
+                                ? 'Progress: off'
+                                : 'Progress: ${(_cfProgress! * 100).round()}%',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.infiloop)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: _ilCtl.reset,
+                          child: const Text('Replay'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(
+                            () => _ilPalette =
+                                (_ilPalette + 1) % _ilPalettes.length,
+                          ),
+                          child: const Text('Colours'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            final p = _ilProgress;
+                            _ilProgress = p == null
+                                ? 0
+                                : (p >= 1 ? null : p + 0.25);
+                          }),
+                          child: Text(
+                            _ilProgress == null
+                                ? 'Progress: off'
+                                : 'Progress: ${(_ilProgress! * 100).round()}%',
+                          ),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _ilAngle = _ilAngle == 0 ? 90 : 0),
+                          child: Text('Angle: ${_ilAngle.round()}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _ilReverse = !_ilReverse),
+                          child: Text('Reverse: ${_ilReverse ? 'on' : 'off'}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _ilCenter = !_ilCenter),
+                          child: Text('Centre: ${_ilCenter ? 'on' : 'off'}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.fireworks)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: _fwCtl.reset,
+                          child: const Text('Replay'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () {
+                            setState(() => _fwText = !_fwText);
+                            _fwCtl.reset();
+                          },
+                          child: Text('Text: ${_fwText ? 'on' : 'off'}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              final all = FireworksTextAnimation.values;
+                              _fwAnim = all[(_fwAnim.index + 1) % all.length];
+                            });
+                            _fwCtl.reset();
+                          },
+                          child: Text('Animation: ${_fwAnim.name}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.moonbloom)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            _mbSide = _mbSide == MoonbloomSide.left
+                                ? MoonbloomSide.right
+                                : MoonbloomSide.left;
+                          }),
+                          child: Text('Side: ${_mbSide.name}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            _mbBlur = _mbBlur == 0
+                                ? 35
+                                : (_mbBlur == 35
+                                      ? 60
+                                      : (_mbBlur == 60 ? 100 : 0));
+                          }),
+                          child: Text('Blur: ${_mbBlur.round()}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            _mbDim = _mbDim == 0 ? 30 : (_mbDim == 30 ? 60 : 0);
+                          }),
+                          child: Text('Dim: ${_mbDim.round()}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.hourglass)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            _hgFocus = _hgFocus > 80
+                                ? 60
+                                : (_hgFocus > 45
+                                      ? 30
+                                      : (_hgFocus > 15 ? 8 : 100));
+                          }),
+                          child: Text('Focus: ${_hgFocus.round()}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _hgCustom = !_hgCustom),
+                          child: Text(
+                            'Colours: ${_hgCustom ? 'custom' : 'original'}',
+                          ),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            final all = HourglassMotion.values;
+                            _hgMotion = all[(_hgMotion.index + 1) % all.length];
+                          }),
+                          child: Text('Motion: ${_hgMotion.name}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.halo)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            _haloFinish = _haloFinish == HaloFinish.metallic
+                                ? HaloFinish.cartoon
+                                : HaloFinish.metallic;
+                          }),
+                          child: Text('Finish: ${_haloFinish.name}'),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => setState(() {
+                            final p = _haloProgress;
+                            _haloProgress = p == null
+                                ? 0
+                                : (p >= 1 ? null : p + 0.25);
+                          }),
+                          child: Text(
+                            _haloProgress == null
+                                ? 'Progress: off'
+                                : 'Progress: ${(_haloProgress! * 100).round()}%',
+                          ),
+                        ),
+                        OutlinedButton(
+                          onPressed: () =>
+                              setState(() => _haloCenter = !_haloCenter),
+                          child: Text('Centre: ${_haloCenter ? 'on' : 'off'}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_demo == _Demo.capsule)
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      children: [
+                        OutlinedButton(
+                          onPressed: _sprite.blink,
+                          child: const Text('Blink'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _sprite.shake,
+                          child: const Text('Shake'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _sprite.nod,
+                          child: const Text('Nod'),
+                        ),
+                        OutlinedButton(
+                          onPressed: _sprite.bounce,
+                          child: const Text('Bounce'),
+                        ),
                       ],
                     ),
                   ),
