@@ -2,7 +2,7 @@
 
 Animated 3D and particle effects for Flutter. CocoVerse UI is a free package of ready-made widgets: spheres, rings, characters, loaders and full-screen backdrops. Each effect is one widget that you place in your app.
 
-**See it live on our Vercel app:** https://REPLACE-WITH-YOUR-VERCEL-LINK
+**See it live on our Vercel app:** https://cocoverse-ui.vercel.app/
 
 ## Install
 
@@ -31,7 +31,7 @@ flutter pub add cocoverse_ui
 - **Meteor**: a cracked meteor with glowing seams, hanging in a swarm of shapes and rock chips.
 - **Mito**: a hovering robot on three rings of light that glides to follow your pointer.
 - **Moonbloom**: a night scene of a blossoming tree with petals drifting down.
-- **Particle cube**: a cube built from particles.
+- **Particle cube**: a cube of glowing dots whose layers turn like a Rubik's cube.
 - **Pisces**: a goldfish that swims on its own and follows your finger.
 - **Plush**: a plush, furry effect with a progress mode and an optional widget in the middle.
 - **Shard sphere**: a sphere of prism-shaped shards that grow and light up near your finger.
