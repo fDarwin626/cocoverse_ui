@@ -137,7 +137,6 @@ class Plush extends StatefulWidget {
       highlight: highlight,
       core: core,
       progress: progress,
-      child: child,
       scale: scale,
       background: background,
       paused: paused,
@@ -150,6 +149,7 @@ class Plush extends StatefulWidget {
       hover: 0,
       interactive: false,
       quality: EffectQuality.medium,
+      child: child,
     );
   }
 
@@ -172,7 +172,6 @@ class Plush extends StatefulWidget {
       fur: fur,
       highlight: highlight,
       core: core,
-      child: child,
       scale: scale,
       background: background,
       paused: paused,
@@ -181,6 +180,7 @@ class Plush extends StatefulWidget {
       speed: 12,
       hover: 50,
       interactive: true,
+      child: child,
     );
   }
 

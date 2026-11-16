@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui' show Offset;
 
 import 'package:cocoverse_ui/src/effects/link_chain/link_chain_motion.dart';
 import 'package:cocoverse_ui/src/effects/link_chain/link_chain_rope.dart';

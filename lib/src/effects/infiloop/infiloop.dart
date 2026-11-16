@@ -434,7 +434,7 @@ class _InfiloopState extends State<Infiloop> {
 
   // This frame's geometry.
   double _a = 100;
-  double _R = 15;
+  double _r = 15;
   double _camD = 1000;
   double _cosT = 1;
   double _sinT = 0;
@@ -451,7 +451,6 @@ class _InfiloopState extends State<Infiloop> {
   double _pY = 0;
   double _pNx = 0;
   double _pNy = 0;
-  double _pS = 0;
   double _pOut = 0;
   double _ex = 0;
   double _ey = 0;
@@ -524,7 +523,6 @@ class _InfiloopState extends State<Infiloop> {
     }
     _pNx = nx;
     _pNy = ny;
-    _pS = t.s[i0] + (t.s[i1] - t.s[i0]) * fr;
     _pOut = t.out[i0] + (t.out[i1] - t.out[i0]) * fr;
   }
 
@@ -660,7 +658,7 @@ class _InfiloopState extends State<Infiloop> {
     final nearX = math.max(0.0, 1 - _pX.abs() / _swellReach);
     final cs = math.max(0.0, math.cos(_tau * (u - st.fp)));
     final frr = 1 + st.fray * math.pow(cs, 12).toDouble();
-    final rr = _R *
+    final rr = _r *
         (1 + _swell * nearX) *
         st.r *
         frr *
@@ -726,7 +724,7 @@ class _InfiloopState extends State<Infiloop> {
     final breathe = _clamp(w.breathe, 0, 10);
     final breath = 1 + breathe / 100 * math.sin(_tau * _clock / 9);
     _a = ext * 0.5 * fill / 1.15 * breath;
-    _R = _a * _clamp(w.thickness, 0, 10) * 0.03;
+    _r = _a * _clamp(w.thickness, 0, 10) * 0.03;
     _camD = _perspective * _a;
     final tilt = _clamp(w.tilt, 0, 60) * _deg;
     _cosT = math.cos(tilt);
@@ -742,7 +740,7 @@ class _InfiloopState extends State<Infiloop> {
     _twist = math.max(0, math.min(8, w.twist));
 
     final a = _a;
-    final R = _R;
+    final R = _r;
     final sf = _clamp(a / 416, 0.55, 1.6);
     final hw = _clamp(w.strandWidth, 0.5, 20) * sf * 1.3;
     final comp = 120 / nS;

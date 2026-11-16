@@ -162,7 +162,7 @@ class _GazeShowcaseState extends State<_GazeShowcase> {
         duration: const Duration(milliseconds: 400),
         layoutBuilder: (current, previous) => Stack(
           fit: StackFit.expand,
-          children: [...previous, if (current != null) current],
+          children: [...previous, ?current],
         ),
         child: _showCase
             ? const GazeOnboarding(key: ValueKey('gaze-case'))

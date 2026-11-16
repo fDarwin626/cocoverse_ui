@@ -277,25 +277,64 @@ List<_Fin> _buildFins() {
 
 /// Where the fish is and how it moves, as the fins need to know it.
 class PiscesPose {
+  /// Body length in pixels: the scale everything is drawn at.
   double k = 100;
+
+  /// Screen x of the body's middle, in pixels.
   double cx = 0;
+
+  /// Screen y of the body's middle, in pixels.
   double cy = 0;
+
+  /// The direction the fish faces, in screen space.
   final Float64List fwd = Float64List(3);
+
+  /// The fish's up direction, in screen space.
   final Float64List up = Float64List(3);
+
+  /// The fish's side direction, in screen space.
   final Float64List side = Float64List(3);
+
+  /// Phase of the tail beat, in radians.
   double beat = 0;
+
+  /// How wide the tail beat is.
   double beatAmp = 0.3;
+
+  /// How far a turn bends the body.
   double bend = 0;
+
+  /// Clock time, in seconds, that drives the slow fin motion.
   double time = 0;
+
+  /// Water drag at the fin roots, in body lengths per second.
   final Float64List dragBase = Float64List(3);
+
+  /// Water drag at the fin tips, in body lengths per second.
   final Float64List dragTip = Float64List(3);
+
+  /// Swim speed, in body lengths per second.
   double speedBl = 0;
+
+  /// Overall opacity of the fish, from 0 to 1.
   double alpha = 1;
+
+  /// How deep and round the body is.
   double depth = 1.1;
+
+  /// Scale applied to the tail's length.
   double tailScale = 1;
+
+  /// How much the fins ripple and sway.
   double sway = 1;
+
+  /// The hood colour, in linear light.
   final Float64List capLin = Float64List(3);
+
+  /// The fin colour, in linear light.
   final Float64List finLin = Float64List(3);
+
+  /// Level of detail the fins are drawn at.
   EffectQuality quality = EffectQuality.medium;
 
   /// Sideways offset of the spine at s.
@@ -359,6 +398,8 @@ class PiscesFins {
     _ready = true;
   }
 
+
+  /// Frees the baked textures. Call it when the fish is removed.
   void dispose() {
     _disposed = true;
     _ready = false;

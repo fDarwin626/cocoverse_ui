@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter/animation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../api/effect_controller.dart';
@@ -404,8 +403,6 @@ class _BlossomState extends State<Blossom> {
 
   List<_Petal> _petalList = <_Petal>[];
   int _builtKey = 0;
-  int _gridU = 0;
-  int _gridV = 0;
   Float64List _pos = Float64List(0);
   Float64List _nor = Float64List(0);
   Float32List _xy = Float32List(0);
@@ -531,8 +528,6 @@ class _BlossomState extends State<Blossom> {
     final key = Object.hash(petals, layers, gridU, gridV);
     if (key == _builtKey && _petalList.isNotEmpty) return;
     _builtKey = key;
-    _gridU = gridU;
-    _gridV = gridV;
     _petalList = _buildPetals(petals, layers);
     final count = _petalList.length;
     final per = (gridU + 1) * (gridV + 1);

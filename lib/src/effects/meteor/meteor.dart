@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/widgets.dart';
 
 import '../../api/effect_controller.dart';
