@@ -2,7 +2,7 @@
 
 All notable changes to `cocoverse_ui` are written here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the package follows [Semantic Versioning](https://semver.org/).
 
-## 0.0.1 - 2026-11-15
+## 0.0.2 - 2026-11-15
 
 The first release of CocoVerse UI: a free collection of animated 3D and particle effects for Flutter. Each effect is a single widget that you place in your app, with no setup beyond the install. They are drawn with Dart painters and fragment shaders and tuned to stay smooth on phones.
 

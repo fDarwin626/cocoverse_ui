@@ -2,7 +2,7 @@
 
 Animated 3D and particle effects for Flutter. CocoVerse UI is a free package of ready-made widgets: spheres, rings, characters, loaders and full-screen backdrops. Each effect is one widget that you place in your app.
 
-**See it live on our Vercel app:** https://cocoverse-ui.vercel.app/
+**See it live on our Documuntation/preview website:** https://cocoverse-ui.vercel.app/
 
 ## Install
 
