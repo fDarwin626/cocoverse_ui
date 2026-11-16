@@ -2,7 +2,7 @@ name: cocoverse_ui
 description: "Animated 3D and particle effects for Flutter, drawn with pure Dart painters and tuned for smooth performance."
 version: 0.0.1
 publish_to: none
-homepage:
+homepage: https://cocoverse-ui.vercel.app
 
 topics:
   - animation
